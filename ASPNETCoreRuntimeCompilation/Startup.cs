@@ -20,19 +20,8 @@ namespace ASPNETCoreRuntimeCompilation
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews()
-                .AddMvcOptions(options =>
-                {
-                    options.Conventions.Add(new FeatureControllerModelConvention());
-                })
                 .AddRazorRuntimeCompilation()
-                .AddRazorOptions(options =>
-                {
-                    // Relocate the default view locations to the 'Features' folder.
-                    options.ViewLocationFormats.Add("/Features/{0}.cshtml");
-                    options.ViewLocationFormats.Add("/Features/Shared/{0}.cshtml");
-
-                    options.ViewLocationExpanders.Add(new FeatureViewLocationExpander());
-                });
+                .AddFeatureFolders();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

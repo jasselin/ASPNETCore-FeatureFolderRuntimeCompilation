@@ -10,6 +10,13 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation
     {
         public static IApplicationBuilder UseFeatureRuntimeCompilation(this IApplicationBuilder app, FeatureRuntimeCompilationMiddlewareOptions options)
         {
+            RemoveAssemblyFromApplicationPartManager(app, options);
+
+            return app.UseMiddleware<FeatureRuntimeCompilationMiddleware>(options);
+        }
+
+        private static void RemoveAssemblyFromApplicationPartManager(IApplicationBuilder app, FeatureRuntimeCompilationMiddlewareOptions options)
+        {
             var appPartManager = app.ApplicationServices.GetRequiredService<ApplicationPartManager>();
 
             var assemblyPart = appPartManager.ApplicationParts
@@ -21,8 +28,6 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation
                 throw new Exception($"Assembly '{options.Assembly.FullName}' is not loaded by the application.");
 
             appPartManager.ApplicationParts.Remove(assemblyPart);
-
-            return app.UseMiddleware<FeatureRuntimeCompilationMiddleware>(options);
         }
     }
 }
