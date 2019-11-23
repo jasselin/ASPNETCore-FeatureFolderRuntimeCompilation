@@ -1,4 +1,5 @@
 using ASPNETCoreRuntimeCompilation.FeatureFolders;
+using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -52,6 +53,9 @@ namespace ASPNETCoreRuntimeCompilation
             app.UseRouting();
 
             app.UseAuthorization();
+
+            // Feature runtime compilation middleware, before hitting the endpoints
+            app.UseFeatureRuntimeCompilation();
 
             app.UseEndpoints(endpoints =>
             {
