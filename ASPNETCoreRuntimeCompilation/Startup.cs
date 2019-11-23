@@ -55,7 +55,10 @@ namespace ASPNETCoreRuntimeCompilation
             app.UseAuthorization();
 
             // Feature runtime compilation middleware, before hitting the endpoints
-            app.UseFeatureRuntimeCompilation();
+            app.UseFeatureRuntimeCompilation(new FeatureRuntimeCompilationMiddlewareOptions
+            {
+                Assembly = typeof(Startup).Assembly // Assembly to be dynamically compiled at runtime
+            });
 
             app.UseEndpoints(endpoints =>
             {
