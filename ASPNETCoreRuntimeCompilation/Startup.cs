@@ -16,7 +16,6 @@ namespace ASPNETCoreRuntimeCompilation
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews()
@@ -27,13 +26,14 @@ namespace ASPNETCoreRuntimeCompilation
                 .AddRazorRuntimeCompilation()
                 .AddRazorOptions(options =>
                 {
+                    // Relocate the default view locations to the 'Features' folder.
                     options.ViewLocationFormats.Add("/Features/{0}.cshtml");
                     options.ViewLocationFormats.Add("/Features/Shared/{0}.cshtml");
+
                     options.ViewLocationExpanders.Add(new FeatureViewLocationExpander());
                 });
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -43,7 +43,6 @@ namespace ASPNETCoreRuntimeCompilation
             else
             {
                 app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
 

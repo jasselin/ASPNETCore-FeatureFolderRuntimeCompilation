@@ -18,14 +18,18 @@ namespace ASPNETCoreRuntimeCompilation.FeatureFolders
             if (!(context.ActionContext.ActionDescriptor is ControllerActionDescriptor controllerActionDescriptor))
                 throw new NullReferenceException("ControllerActionDescriptor cannot be null.");
 
-            var defaultViewLocation = string.Concat("/Features/", string.Join('/', controllerActionDescriptor.Properties.Values), "/{0}.cshtml");
+            // Default view locations ("~/Views", "~/Views/Shared")
             foreach (var location in viewLocations)
                 yield return location;
+
+            // Feature view ("/Features/levelN+1/levelN/FeatureName")
+            var defaultViewLocation = string.Concat("/Features/", string.Join('/', controllerActionDescriptor.Properties.Values), "/{0}.cshtml");
             yield return defaultViewLocation;
         }
 
         public void PopulateValues(ViewLocationExpanderContext context)
         {
+            // Different views with same name on different paths gets resolved by the cache at the first accessed location.
             // see: https://stackoverflow.com/questions/36802661/what-is-iviewlocationexpander-populatevalues-for-in-asp-net-core-mvc
             context.Values["action_displayname"] = context.ActionContext.ActionDescriptor.DisplayName;
         }
