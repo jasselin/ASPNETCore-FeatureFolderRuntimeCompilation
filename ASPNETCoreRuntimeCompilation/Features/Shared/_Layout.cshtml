@@ -1,0 +1,39 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - ASPNETCoreRuntimeCompilation</title>
+</head>
+<body>
+    <h1>Layout</h1>
+    <ul>
+        <li>
+            <a href="/">Home</a><br />
+        </li>
+        <li>
+            <a href="/FeatureA">Feature A</a><br />
+        </li>
+        <li>
+            <a href="/FeatureB">Feature B</a><br />
+        </li>
+        <li>
+            <a href="/Nested/FeatureA">Feature A (Nested)</a><br />
+        </li>
+        <li>
+            <a href="/Nested/FeatureC">Feature C (Nested)</a><br />
+        </li>
+        <li>
+            <a href="/Nested/MoreNested/FeatureA">Feature A (More nested)</a><br />
+        </li>
+        <li>
+            <a href="/Nested/MoreNested/FeatureB">Feature B (More nested)</a><br />
+        </li>
+        <li>
+            <a href="/Nested/MoreNested/FeatureC">Feature C (More nested)</a><br />
+        </li>
+    </ul>
+    <hr />
+    @RenderBody()
+</body>
+</html>
