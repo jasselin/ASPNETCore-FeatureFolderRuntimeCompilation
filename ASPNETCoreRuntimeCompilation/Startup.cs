@@ -1,5 +1,5 @@
 using ASPNETCoreRuntimeCompilation.FeatureFolders;
-using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation;
+using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -21,15 +21,17 @@ namespace ASPNETCoreRuntimeCompilation
         {
             services.AddControllersWithViews()
                 .AddRazorRuntimeCompilation()
-                .AddFeatureFolders();
+                .AddFeatureFolders()
+                .AddFeatureRuntimeCompilation(new FeatureRuntimeCompilationOptions
+                {
+                    Assembly = typeof(Startup).Assembly // Assembly to be dynamically compiled at runtime
+                });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
-            {
                 app.UseDeveloperExceptionPage();
-            }
             else
             {
                 app.UseExceptionHandler("/Home/Error");
@@ -43,11 +45,11 @@ namespace ASPNETCoreRuntimeCompilation
 
             app.UseAuthorization();
 
+            //TODO: Handle putting components in another assembly
+
+            //TODO: No longer a middleware, keep there?
             // Feature runtime compilation middleware, before hitting the endpoints
-            app.UseFeatureRuntimeCompilation(new FeatureRuntimeCompilationMiddlewareOptions
-            {
-                Assembly = typeof(Startup).Assembly // Assembly to be dynamically compiled at runtime
-            });
+            app.UseFeatureRuntimeCompilation();
 
             app.UseEndpoints(endpoints =>
             {
