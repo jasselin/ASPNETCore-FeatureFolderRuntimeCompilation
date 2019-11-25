@@ -45,16 +45,15 @@ namespace ASPNETCoreRuntimeCompilation
 
             app.UseAuthorization();
 
-            //TODO: Handle putting components in another assembly
-
-            //TODO: No longer a middleware, keep there?
-            // Feature runtime compilation middleware, before hitting the endpoints
-            app.UseFeatureRuntimeCompilation();
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapDefaultControllerRoute(); // Attribute routing
             });
+
+            //TODO: Handle putting components in another assembly
+
+            // Removes dynamically compiled assemblies from ApplicationPartManager after ControllerModelConvention are applied.
+            app.UseFeatureRuntimeCompilation();
         }
     }
 }

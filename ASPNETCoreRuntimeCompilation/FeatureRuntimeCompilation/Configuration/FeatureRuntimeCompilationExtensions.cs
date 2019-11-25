@@ -18,18 +18,10 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration
 
             services.AddSingleton(options);
 
-            //services.AddSingleton<IActionSelector>(serviceProvider =>
-            //{
-            //    var actionSelector = serviceProvider.GetRequiredService<IActionSelector>();
-            //    return new FeatureRuntimeCompilationActionSelector(actionSelector);
-            //});
-
-            //services.AddSingleton<IActionSelector, FeatureRuntimeCompilationActionSelector>();
-
             // Add controllers to service provider to be resolved by FeatureRuntimeCompilationControllerActivator
             RegisterControllers(services, options);
 
-            services.AddSingleton<IControllerActivator, FeatureRuntimeCompilationControllerActivator>();
+            //services.AddSingleton<IControllerActivator, FeatureRuntimeCompilationControllerActivator>();
 
             services.AddSingleton<IRuntimeFeatureProvider, RuntimeFeatureProvider>();
             services.AddSingleton<IFeatureCompilerCache, FeatureCompilerCache>();
@@ -65,7 +57,7 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration
             if (assemblyPart == null)
                 throw new Exception($"Assembly '{options.Assembly.FullName}' is not loaded by the application.");
 
-            // TODO: If removed, we loose route values. Still need to remove?
+            //TODO: remove assembly
             //appPartManager.ApplicationParts.Remove(assemblyPart);
         }
     }

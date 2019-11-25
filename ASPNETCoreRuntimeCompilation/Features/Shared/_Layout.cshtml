@@ -1,4 +1,8 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Routing
+@{ 
+    var routeData = this.ViewContext.HttpContext.GetRouteData();
+}
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -32,6 +36,14 @@
         <li>
             <a href="/Nested/MoreNested/FeatureC">Feature C (More nested)</a><br />
         </li>
+    </ul>
+    <hr />
+    <h2>Route values</h2>
+    <ul>
+        @foreach (var value in routeData.Values)
+        {
+            <li>@value.Key = @value.Value</li>
+        }
     </ul>
     <hr />
     @RenderBody()

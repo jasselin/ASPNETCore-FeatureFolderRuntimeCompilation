@@ -24,7 +24,11 @@ namespace ASPNETCoreRuntimeCompilation.FeatureFolders
             // ASPNETCoreRuntimeCompilation.Features.Level1.Level2.FeatureA => { level1 = "Level1", level2 = "Level2" }
             var tokens = controllerType.FullName.Substring(featureNamespace.Length).Split('.');
             for (var i = 0; i < tokens.Length - 1; i++)
-                controller.Properties.Add($"level{tokens.Length - i - 1}", tokens[i]);
+            {
+                var key = $"level{tokens.Length - i - 1}";
+                controller.RouteValues.Add(key, tokens[i]);
+                controller.Properties.Add(key, tokens[i]);
+            }
         }
 
         private void SetControllerRoute(ControllerModel controller)
