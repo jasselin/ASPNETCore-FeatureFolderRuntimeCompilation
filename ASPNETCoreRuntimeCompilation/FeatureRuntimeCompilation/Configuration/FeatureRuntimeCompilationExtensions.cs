@@ -1,9 +1,11 @@
 ﻿using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation;
 using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.CodeAnalysis.Razor;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Linq;
@@ -21,7 +23,9 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration
             // Add controllers to service provider to be resolved by FeatureRuntimeCompilationControllerActivator
             RegisterControllers(services, options);
 
-            //services.AddSingleton<IControllerActivator, FeatureRuntimeCompilationControllerActivator>();
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+            services.AddSingleton<IControllerActivator, FeatureRuntimeCompilationControllerActivator>();
 
             services.AddSingleton<IRuntimeFeatureProvider, RuntimeFeatureProvider>();
             services.AddSingleton<IFeatureCompilerCache, FeatureCompilerCache>();

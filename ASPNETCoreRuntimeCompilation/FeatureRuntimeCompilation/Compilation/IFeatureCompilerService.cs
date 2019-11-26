@@ -2,5 +2,6 @@
 {
     public interface IFeatureCompilerService
     {
+        FeatureCompilerResult Compile(string featurePath);
     }
 }
