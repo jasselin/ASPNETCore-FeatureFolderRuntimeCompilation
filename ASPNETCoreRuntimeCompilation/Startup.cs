@@ -1,7 +1,10 @@
 using ASPNETCoreRuntimeCompilation.FeatureFolders;
+using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation;
 using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration;
+using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -45,6 +48,11 @@ namespace ASPNETCoreRuntimeCompilation
 
             app.UseAuthorization();
 
+            var featureProvider = app.ApplicationServices.GetRequiredService<IRuntimeFeatureProvider>();
+            var appPartManager = app.ApplicationServices.GetRequiredService<ApplicationPartManager>();
+            var actionDescriptorChangeProvider = app.ApplicationServices.GetRequiredService<FeatureRuntimeCompilationActionDescriptorChangeProvider>();
+            app.UseMiddleware<FeatureRuntimeCompilationMiddleware>(featureProvider, appPartManager, actionDescriptorChangeProvider); //TODO: Extension method
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapDefaultControllerRoute(); // Attribute routing
@@ -53,7 +61,7 @@ namespace ASPNETCoreRuntimeCompilation
             //TODO: Handle putting components in another assembly
 
             // Removes dynamically compiled assemblies from ApplicationPartManager after ControllerModelConvention are applied.
-            app.UseFeatureRuntimeCompilation();
+            app.UseFeatureRuntimeCompilation(); // TODO: refactor, merge with previous extension method
         }
     }
 }

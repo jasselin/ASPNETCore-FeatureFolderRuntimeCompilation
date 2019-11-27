@@ -18,7 +18,7 @@
     "ASPNETCoreRuntimeCompilation": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "nested/morenested/featureb",
+      "launchUrl": "plaintext",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },

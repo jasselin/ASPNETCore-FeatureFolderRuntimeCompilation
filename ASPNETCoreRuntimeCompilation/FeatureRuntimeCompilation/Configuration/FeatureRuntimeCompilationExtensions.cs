@@ -1,11 +1,13 @@
-﻿using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation;
+﻿using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Caching;
+using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation;
+using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.DI;
 using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.AspNetCore.Mvc.Controllers;
-using Microsoft.CodeAnalysis.Razor;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Linq;
@@ -25,7 +27,11 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
-            services.AddSingleton<IControllerActivator, FeatureRuntimeCompilationControllerActivator>();
+            //services.AddSingleton<IFeatureRuntimeCompilationServiceProvider, FeatureRuntimeCompilationServiceProvider>();
+
+            //services.AddSingleton<IControllerActivator, FeatureRuntimeCompilationControllerActivator>();
+            services.AddSingleton<FeatureRuntimeCompilationActionDescriptorChangeProvider>();
+            services.AddSingleton<IActionDescriptorChangeProvider>(sp => sp.GetService<FeatureRuntimeCompilationActionDescriptorChangeProvider>());
 
             services.AddSingleton<IRuntimeFeatureProvider, RuntimeFeatureProvider>();
             services.AddSingleton<IFeatureCompilerCache, FeatureCompilerCache>();
@@ -62,7 +68,7 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration
                 throw new Exception($"Assembly '{options.Assembly.FullName}' is not loaded by the application.");
 
             //TODO: remove assembly
-            //appPartManager.ApplicationParts.Remove(assemblyPart);
+            appPartManager.ApplicationParts.Remove(assemblyPart);
         }
     }
 }

@@ -1,8 +1,9 @@
-﻿using Microsoft.Extensions.Primitives;
+﻿using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation;
+using Microsoft.Extensions.Primitives;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation
+namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Caching
 {
     public class FeatureCompilerCacheResult
     {

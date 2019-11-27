@@ -6,12 +6,13 @@ namespace ASPNETCoreRuntimeCompilation.Features.Nested.MoreNested.FeatureB
     {
         public IActionResult Index()
         {
-            var viewModel = new FeatureBViewModel
-            {
-                Message = "Feature B (More nested) message"
-            };
+            //var viewModel = new FeatureBViewModel
+            //{
+            //    Message = "Feature B message"
+            //};
 
-            return View("FeatureB", viewModel);
+            //return View("FeatureB", viewModel);
+            return Content(this.GetType().Assembly.Location);
         }
     }
 }

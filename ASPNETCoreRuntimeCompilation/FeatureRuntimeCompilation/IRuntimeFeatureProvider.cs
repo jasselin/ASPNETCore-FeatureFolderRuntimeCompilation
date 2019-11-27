@@ -6,6 +6,9 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation
 {
     public interface IRuntimeFeatureProvider
     {
-        Type GetControllerType(ControllerContext context);
+        RuntimeFeatureProviderResult GetFeature(RouteValueDictionary routeValues);
+
+        //[Obsolete]
+        //Type GetControllerType(ControllerContext context);
     }
 }
