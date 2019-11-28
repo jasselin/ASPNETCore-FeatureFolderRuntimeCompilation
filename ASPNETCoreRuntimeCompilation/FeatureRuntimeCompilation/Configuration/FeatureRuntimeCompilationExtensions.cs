@@ -68,7 +68,7 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration
                 throw new Exception($"Assembly '{options.Assembly.FullName}' is not loaded by the application.");
 
             //TODO: remove assembly
-            appPartManager.ApplicationParts.Remove(assemblyPart);
+            //appPartManager.ApplicationParts.Remove(assemblyPart);
         }
     }
 }

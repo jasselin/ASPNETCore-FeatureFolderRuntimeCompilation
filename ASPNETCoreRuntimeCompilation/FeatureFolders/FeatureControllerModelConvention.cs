@@ -1,12 +1,22 @@
 ﻿using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using Microsoft.Extensions.Logging;
 using System.Linq;
 
 namespace ASPNETCoreRuntimeCompilation.FeatureFolders
 {
     public class FeatureControllerModelConvention : IControllerModelConvention
     {
+        private readonly ILogger<FeatureControllerModelConvention> _logger;
+
+        public FeatureControllerModelConvention(ILogger<FeatureControllerModelConvention> logger)
+        {
+            _logger = logger;
+        }
+
         public void Apply(ControllerModel controller)
         {
+            _logger.LogInformation($"FeatureControllerModelConvention.Apply ('{controller.ControllerType.FullName}')");
+
             SetControllerProperties(controller);
             SetControllerRoute(controller);
         }

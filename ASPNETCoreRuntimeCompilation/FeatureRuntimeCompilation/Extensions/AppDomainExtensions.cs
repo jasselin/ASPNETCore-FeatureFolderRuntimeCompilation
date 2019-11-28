@@ -10,10 +10,10 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Extensions
         //TODO: Check if still useful
         public static IList<MetadataReference> GetReferences(this AppDomain appDomain)
         {
-            var assemblies = appDomain.GetAssemblies().ToList();
-            //assemblies.Add(typeof(Microsoft.CSharp.RuntimeBinder.Binder).Assembly);
-            assemblies.Add(typeof(System.IO.Compression.ZipFile).Assembly);
-            return assemblies
+            //var assemblies = appDomain.GetAssemblies().ToList();
+            ////assemblies.Add(typeof(Microsoft.CSharp.RuntimeBinder.Binder).Assembly);
+            //assemblies.Add(typeof(System.IO.Compression.ZipFile).Assembly);
+            return appDomain.GetAssemblies()
                 .Where(x => !x.IsDynamic && !string.IsNullOrWhiteSpace(x.Location))
                 .Select(x => MetadataReference.CreateFromFile(x.Location))
                 .Cast<MetadataReference>()

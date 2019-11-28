@@ -22,7 +22,8 @@ namespace ASPNETCoreRuntimeCompilation
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllersWithViews()
+            services
+                .AddControllersWithViews() //TODO: check if there is a way to add mvc without controller discovery
                 .AddRazorRuntimeCompilation()
                 .AddFeatureFolders()
                 .AddFeatureRuntimeCompilation(new FeatureRuntimeCompilationOptions
@@ -51,17 +52,19 @@ namespace ASPNETCoreRuntimeCompilation
             var featureProvider = app.ApplicationServices.GetRequiredService<IRuntimeFeatureProvider>();
             var appPartManager = app.ApplicationServices.GetRequiredService<ApplicationPartManager>();
             var actionDescriptorChangeProvider = app.ApplicationServices.GetRequiredService<FeatureRuntimeCompilationActionDescriptorChangeProvider>();
-            app.UseMiddleware<FeatureRuntimeCompilationMiddleware>(featureProvider, appPartManager, actionDescriptorChangeProvider); //TODO: Extension method
+            //app.UseMiddleware<FeatureRuntimeCompilationMiddleware>(featureProvider, appPartManager, actionDescriptorChangeProvider); //TODO: Extension method
+
+            // Removes dynamically compiled assemblies from ApplicationPartManager after ControllerModelConvention are applied.
+            app.UseFeatureRuntimeCompilation(); // TODO: refactor, merge with previous extension method
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapDefaultControllerRoute(); // Attribute routing
+                //endpoints.MapDefaultControllerRoute(); // Attribute routing
+                endpoints.MapFeatureControllers();
             });
 
             //TODO: Handle putting components in another assembly
 
-            // Removes dynamically compiled assemblies from ApplicationPartManager after ControllerModelConvention are applied.
-            app.UseFeatureRuntimeCompilation(); // TODO: refactor, merge with previous extension method
         }
     }
 }

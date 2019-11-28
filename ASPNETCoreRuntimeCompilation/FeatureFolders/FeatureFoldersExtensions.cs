@@ -6,19 +6,18 @@ namespace ASPNETCoreRuntimeCompilation.FeatureFolders
     {
         public static IMvcBuilder AddFeatureFolders(this IMvcBuilder mvcBuilder)
         {
-            return mvcBuilder
-                .AddMvcOptions(options =>
-                {
-                    options.Conventions.Add(new FeatureControllerModelConvention());
-                })
-                .AddRazorOptions(options =>
-                {
-                    // Relocate the default view locations to the 'Features' folder.
-                    options.ViewLocationFormats.Add("/Features/{0}.cshtml");
-                    options.ViewLocationFormats.Add("/Features/Shared/{0}.cshtml");
+            //mvcBuilder.Services.ConfigureOptions<FeatureMvcOptionsConfiguration>();
 
-                    options.ViewLocationExpanders.Add(new FeatureViewLocationExpander());
-                });
+            mvcBuilder.AddRazorOptions(options =>
+            {
+                // Relocate the default view locations to the 'Features' folder.
+                options.ViewLocationFormats.Add("/Features/{0}.cshtml");
+                options.ViewLocationFormats.Add("/Features/Shared/{0}.cshtml");
+
+                options.ViewLocationExpanders.Add(new FeatureViewLocationExpander());
+            });
+
+            return mvcBuilder;
         }
     }
 }

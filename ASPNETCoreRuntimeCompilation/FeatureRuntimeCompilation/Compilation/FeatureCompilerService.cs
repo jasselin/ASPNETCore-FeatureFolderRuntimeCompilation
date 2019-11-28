@@ -65,6 +65,7 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation
             var outputPath = Path.Combine(_hostingEnvironment.ContentRootPath, "Temp", "dynamic_assemblies");
             Directory.CreateDirectory(outputPath);
 
+            //TODO: In memory only
             var assemblyPath = Path.Combine(outputPath, assemblyName + ".dll");
             var pdbPath = Path.ChangeExtension(assemblyPath, "pdb");
 
