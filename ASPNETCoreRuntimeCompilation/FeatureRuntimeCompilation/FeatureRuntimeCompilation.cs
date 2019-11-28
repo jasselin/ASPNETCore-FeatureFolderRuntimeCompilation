@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation
+﻿namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation
 {
     //TODO: Remove
     public static class FeatureRuntimeCompilation

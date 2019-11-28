@@ -1,5 +1,4 @@
-﻿using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration;
-using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Extensions;
+﻿using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Extensions;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis;
@@ -21,13 +20,11 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation
         private IList<MetadataReference> _compilationReferences;
         private bool _compilationReferencesInitialized;
         private object _compilationReferencesLock = new object();
-        private readonly FeatureRuntimeCompilationOptions _options;
         private readonly RazorProjectEngine _razorProjectEngine;
         private IList<MetadataReference> _refs;
 
-        public FeatureCompilerService(FeatureRuntimeCompilationOptions options, RazorProjectEngine razorProjectEngine)
+        public FeatureCompilerService(RazorProjectEngine razorProjectEngine)
         {
-            _options = options;
             _razorProjectEngine = razorProjectEngine;
         }
 
@@ -55,26 +52,16 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation
                 }
             });
 
-            var compilation = GetCompilation(assemblyName, syntaxTrees);
+            using var assemblyStream = new MemoryStream();
+            using var pdbStream = new MemoryStream();
 
-            var outputPath = Path.Combine(_options.ProjectPath, "Temp", "dynamic_assemblies");
-            Directory.CreateDirectory(outputPath);
+            var result = GetCompilation(assemblyName, syntaxTrees)
+                .Emit(assemblyStream, pdbStream, options: new EmitOptions(debugInformationFormat: DebugInformationFormat.Pdb));
 
-            //TODO: In memory only
-            var assemblyPath = Path.Combine(outputPath, assemblyName + ".dll");
-            var pdbPath = Path.ChangeExtension(assemblyPath, "pdb");
+            if (!result.Success)
+                return GetCompilationFailedResult(result.Diagnostics);
 
-            using (var assemblyStream = new FileStream(assemblyPath, FileMode.Create))
-            {
-                using (var pdbStream = new FileStream(pdbPath, FileMode.Create))
-                {
-                    var result = compilation.Emit(assemblyStream, pdbStream, options: new EmitOptions(debugInformationFormat: DebugInformationFormat.Pdb));
-                    if (!result.Success)
-                        return GetCompilationFailedResult(result.Diagnostics);
-                }
-            }
-
-            var assembly = Assembly.LoadFrom(assemblyPath);
+            var assembly = Assembly.Load(assemblyStream.ToArray(), pdbStream.ToArray());
             return new FeatureCompilerResult(assembly);
         }
 
