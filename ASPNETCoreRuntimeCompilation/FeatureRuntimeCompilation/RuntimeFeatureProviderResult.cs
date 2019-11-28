@@ -7,11 +7,13 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation
     {
         public RuntimeFeatureProviderResult(Assembly assembly, bool isUpdated, Type controllerType)
         {
-            Assembly = assembly;
+            Assembly = assembly ?? throw new ArgumentNullException(nameof(assembly));
             HasChanged = isUpdated;
-            ControllerType = controllerType;
+            ControllerType = controllerType ?? throw new ArgumentNullException(nameof(assembly));
+            Name = assembly.GetName().Name;
         }
 
+        public string Name { get; }
         public Assembly Assembly { get; }
         public bool HasChanged { get; }
         public Type ControllerType { get; }

@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.AspNetCore.Routing;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -14,34 +12,50 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc
         private readonly RequestDelegate _next;
 
         private readonly IRuntimeFeatureProvider _featureProvider;
+        //private readonly IFeatureControllerInfoProvider _controllerInfoProvider;
         private readonly ApplicationPartManager _appPartManager;
         private readonly FeatureRuntimeCompilationActionDescriptorChangeProvider _actionDescriptorChangeProvider;
         private readonly ILogger<FeatureRuntimeCompilationMiddleware> _logger;
 
         public FeatureRuntimeCompilationMiddleware(RequestDelegate next, ILogger<FeatureRuntimeCompilationMiddleware> logger,
-                                                   IRuntimeFeatureProvider featureProvider, ApplicationPartManager appPartManager,
+                                                   IRuntimeFeatureProvider featureProvider,
+                                                   ApplicationPartManager appPartManager,
                                                    FeatureRuntimeCompilationActionDescriptorChangeProvider actionDescriptorChangeProvider)
         {
             _next = next;
             _logger = logger;
             _featureProvider = featureProvider;
+            //_controllerInfoProvider = controllerInfoProvider;
             _appPartManager = appPartManager;
             _actionDescriptorChangeProvider = actionDescriptorChangeProvider;
         }
 
         public async Task InvokeAsync(HttpContext context)
         {
-            var routeData = context.GetRouteData();
-            if (!routeData.Values.Any())
+
+            var requestPath = context.Request.Path;
+            //var endpoint = context.GetEndpoint();
+            //TODO: remove dependency on route data
+            //var routeData = context.GetRouteData();
+            //if (!routeData.Values.Any())
+            //{
+            //    _logger.LogWarning("No route values, skipping feature detection.");
+            //    await _next(context);
+            //    return;
+            //}
+
+            _logger.LogInformation($"Looking for feature for path '{context.Request.Path}'.");
+
+            var feature = _featureProvider.GetFeature(context);
+            if (feature == null)
             {
-                _logger.LogWarning("No route values, skipping feature detection.");
+                _logger.LogWarning("No feature found.");
                 await _next(context);
                 return;
             }
 
-            _logger.LogInformation($"Looking for feature for path '{context.Request.Path}'.");
+            _logger.LogInformation($"Feature '{feature.Name}' was found.");
 
-            var feature = _featureProvider.GetFeature(routeData.Values);
             if (!feature.HasChanged)
             {
                 _logger.LogInformation("Feature has not changed, skipping compilation.");

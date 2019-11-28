@@ -1,4 +1,4 @@
-using ASPNETCoreRuntimeCompilation.FeatureFolders;
+﻿using ASPNETCoreRuntimeCompilation.FeatureFolders;
 using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation;
 using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration;
 using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc;
@@ -13,9 +13,12 @@ namespace ASPNETCoreRuntimeCompilation
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        private IWebHostEnvironment _env;
+
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             Configuration = configuration;
+            _env = env;
         }
 
         public IConfiguration Configuration { get; }
@@ -28,7 +31,8 @@ namespace ASPNETCoreRuntimeCompilation
                 .AddFeatureFolders()
                 .AddFeatureRuntimeCompilation(new FeatureRuntimeCompilationOptions
                 {
-                    Assembly = typeof(Startup).Assembly // Assembly to be dynamically compiled at runtime
+                    Assembly = typeof(Startup).Assembly, // Assembly to be dynamically compiled at runtime
+                    ProjectPath = _env.ContentRootPath
                 });
         }
 
@@ -45,14 +49,14 @@ namespace ASPNETCoreRuntimeCompilation
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
-            app.UseRouting();
-
-            app.UseAuthorization();
-
+            //TODO: move to UseEndPoints, group with MapFeatureControlers?
             var featureProvider = app.ApplicationServices.GetRequiredService<IRuntimeFeatureProvider>();
             var appPartManager = app.ApplicationServices.GetRequiredService<ApplicationPartManager>();
             var actionDescriptorChangeProvider = app.ApplicationServices.GetRequiredService<FeatureRuntimeCompilationActionDescriptorChangeProvider>();
-            //app.UseMiddleware<FeatureRuntimeCompilationMiddleware>(featureProvider, appPartManager, actionDescriptorChangeProvider); //TODO: Extension method
+            app.UseMiddleware<FeatureRuntimeCompilationMiddleware>(featureProvider, appPartManager, actionDescriptorChangeProvider); //TODO: Extension method 
+
+            app.UseRouting();
+            app.UseAuthorization();
 
             // Removes dynamically compiled assemblies from ApplicationPartManager after ControllerModelConvention are applied.
             app.UseFeatureRuntimeCompilation(); // TODO: refactor, merge with previous extension method

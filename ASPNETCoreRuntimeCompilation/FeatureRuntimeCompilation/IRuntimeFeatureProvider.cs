@@ -1,12 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Routing;
-using System;
+﻿using Microsoft.AspNetCore.Http;
 
 namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation
 {
     public interface IRuntimeFeatureProvider
     {
-        RuntimeFeatureProviderResult GetFeature(RouteValueDictionary routeValues);
+        //RuntimeFeatureProviderResult GetFeature(RouteValueDictionary routeValues);
+        RuntimeFeatureProviderResult GetFeature(HttpContext context);
 
         //[Obsolete]
         //Type GetControllerType(ControllerContext context);

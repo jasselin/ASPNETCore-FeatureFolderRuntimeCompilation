@@ -34,6 +34,7 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration
             services.AddSingleton<IActionDescriptorChangeProvider>(sp => sp.GetService<FeatureRuntimeCompilationActionDescriptorChangeProvider>());
 
             services.AddSingleton<IRuntimeFeatureProvider, RuntimeFeatureProvider>();
+            services.AddTransient<IFeatureMetadataProvider, FeatureMetadataProvider>();
             services.AddSingleton<IFeatureCompilerCache, FeatureCompilerCache>();
             services.AddTransient<IFeatureCompilerService, FeatureCompilerService>();
 
@@ -67,8 +68,9 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration
             if (assemblyPart == null)
                 throw new Exception($"Assembly '{options.Assembly.FullName}' is not loaded by the application.");
 
+            //TODO: don't include controllerfeature from the start
             //TODO: remove assembly
-            //appPartManager.ApplicationParts.Remove(assemblyPart);
+            appPartManager.ApplicationParts.Remove(assemblyPart);
         }
     }
 }
