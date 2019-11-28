@@ -5,6 +5,7 @@ using System;
 
 namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc
 {
+    //TODO: Remove
     public class FeatureRuntimeCompilationControllerActivator : IControllerActivator
     {
         //private IRuntimeFeatureProvider _runtimeFeatureProvider;

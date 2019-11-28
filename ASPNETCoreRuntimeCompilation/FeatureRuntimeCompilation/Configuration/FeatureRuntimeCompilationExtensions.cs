@@ -1,12 +1,8 @@
 ﻿using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Caching;
 using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation;
-using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.DI;
 using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
-using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -23,9 +19,9 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration
             services.AddSingleton(options);
 
             // Add controllers to service provider to be resolved by FeatureRuntimeCompilationControllerActivator
-            RegisterControllers(services, options);
+            //RegisterControllers(services, options);
 
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            //services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             //services.AddSingleton<IFeatureRuntimeCompilationServiceProvider, FeatureRuntimeCompilationServiceProvider>();
 
@@ -41,11 +37,11 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration
             return mvcBuilder;
         }
 
-        private static void RegisterControllers(IServiceCollection services, FeatureRuntimeCompilationOptions options)
-        {
-            foreach (var controllerType in options.Assembly.ExportedTypes.Where(x => typeof(Controller).IsAssignableFrom(x)))
-                services.AddTransient(controllerType);
-        }
+        //private static void RegisterControllers(IServiceCollection services, FeatureRuntimeCompilationOptions options)
+        //{
+        //    foreach (var controllerType in options.Assembly.ExportedTypes.Where(x => typeof(Controller).IsAssignableFrom(x)))
+        //        services.AddTransient(controllerType);
+        //}
 
         public static IApplicationBuilder UseFeatureRuntimeCompilation(this IApplicationBuilder app)
         {
@@ -69,7 +65,6 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration
                 throw new Exception($"Assembly '{options.Assembly.FullName}' is not loaded by the application.");
 
             //TODO: don't include controllerfeature from the start
-            //TODO: remove assembly
             appPartManager.ApplicationParts.Remove(assemblyPart);
         }
     }

@@ -49,7 +49,7 @@ namespace ASPNETCoreRuntimeCompilation
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
-            //TODO: move to UseEndPoints, group with MapFeatureControlers?
+            //TODO: move to UseEndpoints, group with MapFeatureControlers?
             var featureProvider = app.ApplicationServices.GetRequiredService<IRuntimeFeatureProvider>();
             var appPartManager = app.ApplicationServices.GetRequiredService<ApplicationPartManager>();
             var actionDescriptorChangeProvider = app.ApplicationServices.GetRequiredService<FeatureRuntimeCompilationActionDescriptorChangeProvider>();

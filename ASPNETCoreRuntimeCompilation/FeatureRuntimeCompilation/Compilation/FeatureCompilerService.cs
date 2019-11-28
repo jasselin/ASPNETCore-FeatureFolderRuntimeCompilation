@@ -1,15 +1,12 @@
-﻿using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Extensions;
+﻿using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration;
+using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Extensions;
 using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -21,19 +18,17 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation
 {
     public class FeatureCompilerService : IFeatureCompilerService
     {
-        private readonly IWebHostEnvironment _hostingEnvironment;
         private IList<MetadataReference> _compilationReferences;
         private bool _compilationReferencesInitialized;
         private object _compilationReferencesLock = new object();
-        private readonly ApplicationPartManager _partManager;
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly FeatureRuntimeCompilationOptions _options;
+        private readonly RazorProjectEngine _razorProjectEngine;
         private IList<MetadataReference> _refs;
 
-        public FeatureCompilerService(IWebHostEnvironment hostingEnvironment, ApplicationPartManager partManager, IHttpContextAccessor httpContextAccessor)
+        public FeatureCompilerService(FeatureRuntimeCompilationOptions options, RazorProjectEngine razorProjectEngine)
         {
-            _hostingEnvironment = hostingEnvironment;
-            _partManager = partManager;
-            _httpContextAccessor = httpContextAccessor;
+            _options = options;
+            _razorProjectEngine = razorProjectEngine;
         }
 
         private CSharpCompilation GetCompilation(string assemblyName, IEnumerable<SyntaxTree> syntaxTrees)
@@ -62,7 +57,7 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation
 
             var compilation = GetCompilation(assemblyName, syntaxTrees);
 
-            var outputPath = Path.Combine(_hostingEnvironment.ContentRootPath, "Temp", "dynamic_assemblies");
+            var outputPath = Path.Combine(_options.ProjectPath, "Temp", "dynamic_assemblies");
             Directory.CreateDirectory(outputPath);
 
             //TODO: In memory only
@@ -93,8 +88,7 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation
             if (_refs == null)
                 _refs = AppDomain.CurrentDomain.GetReferences();
 
-            var projectEngine = _httpContextAccessor.HttpContext.RequestServices.GetRequiredService<RazorProjectEngine>();
-            var metadataReferenceFeature = projectEngine.EngineFeatures.SingleOrDefault(x => x is IMetadataReferenceFeature) as IMetadataReferenceFeature;
+            var metadataReferenceFeature = _razorProjectEngine.EngineFeatures.SingleOrDefault(x => x is IMetadataReferenceFeature) as IMetadataReferenceFeature;
 
             return metadataReferenceFeature.References.Union(_refs).Distinct().ToList();
         }

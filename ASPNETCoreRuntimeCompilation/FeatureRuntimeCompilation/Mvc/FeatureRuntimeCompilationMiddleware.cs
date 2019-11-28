@@ -32,18 +32,6 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc
 
         public async Task InvokeAsync(HttpContext context)
         {
-
-            var requestPath = context.Request.Path;
-            //var endpoint = context.GetEndpoint();
-            //TODO: remove dependency on route data
-            //var routeData = context.GetRouteData();
-            //if (!routeData.Values.Any())
-            //{
-            //    _logger.LogWarning("No route values, skipping feature detection.");
-            //    await _next(context);
-            //    return;
-            //}
-
             _logger.LogInformation($"Looking for feature for path '{context.Request.Path}'.");
 
             var feature = _featureProvider.GetFeature(context);
