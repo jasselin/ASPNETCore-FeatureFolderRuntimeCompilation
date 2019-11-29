@@ -45,12 +45,9 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation
             return Rewrite(compilation);
         }
 
-        public FeatureCompilerResult Compile(string controllerDir)
+        public FeatureCompilerResult Compile(string assemblyName, string controllerDir)
         {
             var csFiles = Directory.GetFiles(controllerDir, "*.cs", SearchOption.AllDirectories);
-
-            // Keep the same name as the original assembly
-            var assemblyName = _options.Assembly.GetName().Name;
 
             var syntaxTrees = csFiles.Select(file =>
             {

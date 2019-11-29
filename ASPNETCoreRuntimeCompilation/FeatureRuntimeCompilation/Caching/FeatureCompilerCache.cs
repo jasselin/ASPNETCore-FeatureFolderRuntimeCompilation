@@ -1,10 +1,8 @@
 ﻿using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation;
-using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Primitives;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Caching
 {
@@ -43,7 +41,7 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Caching
 
                 if (cacheEntry == null)
                 {
-                    var compilerResult = _compilerService.Compile(featurePath);
+                    var compilerResult = _compilerService.Compile(cacheKey, featurePath);
                     if (!compilerResult.Success)
                         return (new FeatureCompilerCacheResult(compilerResult), false);
 

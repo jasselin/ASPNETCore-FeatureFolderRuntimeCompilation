@@ -26,7 +26,7 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation
             if (metadata == null)
                 return null;
 
-            var (cacheResult, newAssembly) = _compilerCache.GetOrAdd(metadata.ControllerTypeName, metadata.FeaturePath);
+            var (cacheResult, newAssembly) = _compilerCache.GetOrAdd(metadata.FeatureName, metadata.FeaturePath);
 
             var compilerResult = cacheResult.Result;
             if (!compilerResult.Success)

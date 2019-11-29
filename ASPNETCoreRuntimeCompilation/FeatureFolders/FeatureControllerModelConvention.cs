@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.ApplicationModels;
+﻿using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration;
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.Extensions.Logging;
 using System.Linq;
 
@@ -6,10 +7,12 @@ namespace ASPNETCoreRuntimeCompilation.FeatureFolders
 {
     public class FeatureControllerModelConvention : IControllerModelConvention
     {
+        private readonly FeatureRuntimeCompilationOptions _options;
         private readonly ILogger<FeatureControllerModelConvention> _logger;
 
-        public FeatureControllerModelConvention(ILogger<FeatureControllerModelConvention> logger)
+        public FeatureControllerModelConvention(FeatureRuntimeCompilationOptions options, ILogger<FeatureControllerModelConvention> logger)
         {
+            _options = options;
             _logger = logger;
         }
 
@@ -24,19 +27,18 @@ namespace ASPNETCoreRuntimeCompilation.FeatureFolders
         private void SetControllerProperties(ControllerModel controller)
         {
             var controllerType = controller.ControllerType;
-            var featureNamespace = string.Concat(controllerType.Assembly.GetName().Name, ".Features.");
 
             // Not a feature controller
-            if (!controllerType.FullName.StartsWith(featureNamespace))
+            if (!controllerType.FullName.StartsWith(_options.FeatureNamespace))
                 return;
 
             // Gets the controller properies from the feature class name
             // ASPNETCoreRuntimeCompilation.Features.Level1.Level2.FeatureA => { level1 = "Level1", level2 = "Level2" }
-            var tokens = controllerType.FullName.Substring(featureNamespace.Length).Split('.');
+            var tokens = controllerType.FullName.Substring(_options.FeatureNamespace.Length + 1).Split('.');
             for (var i = 0; i < tokens.Length - 1; i++)
             {
                 var key = $"level{tokens.Length - i - 1}";
-                //controller.RouteValues.Add(key, tokens[i]);
+                //controller.RouteValues.Add(key, tokens[i]); //TODO: Still needed?
                 controller.Properties.Add(key, tokens[i]);
             }
         }

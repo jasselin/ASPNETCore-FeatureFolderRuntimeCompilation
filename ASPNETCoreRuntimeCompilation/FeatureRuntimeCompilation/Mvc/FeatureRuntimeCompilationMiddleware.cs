@@ -43,16 +43,14 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc
 
             if (!feature.HasChanged)
             {
-                _logger.LogInformation("Feature has not changed, skipping compilation.");
+                _logger.LogInformation("Feature has not changed.");
                 await _next(context);
                 return;
             }
 
-            _logger.LogInformation($"Feature has changed, compiling...");
-
             var parts = _appPartManager.ApplicationParts
                 .OfType<AssemblyPart>()
-                .Where(x => x.Assembly.ExportedTypes.Any(x => x.FullName == feature.ControllerType.FullName))
+                .Where(x => x.Assembly.GetName().Name == feature.Name)
                 .ToArray();
 
             foreach (var part in parts)

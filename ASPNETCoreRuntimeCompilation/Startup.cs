@@ -29,11 +29,9 @@ namespace ASPNETCoreRuntimeCompilation
                 .AddControllersWithViews() //TODO: check if there is a way to add mvc without controller discovery
                 .AddRazorRuntimeCompilation()
                 .AddFeatureFolders()
-                .AddFeatureRuntimeCompilation(new FeatureRuntimeCompilationOptions
-                {
-                    Assembly = typeof(Startup).Assembly, // Assembly to be dynamically compiled at runtime
-                    ProjectPath = _env.ContentRootPath
-                });
+                .AddFeatureRuntimeCompilation(new FeatureRuntimeCompilationOptions(
+                    typeof(Startup).Assembly, // Assembly to be dynamically compiled at runtime
+                    _env.ContentRootPath));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -41,15 +39,12 @@ namespace ASPNETCoreRuntimeCompilation
             if (env.IsDevelopment())
                 app.UseDeveloperExceptionPage();
             else
-            {
-                app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
-            }
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
-            //TODO: move to UseEndpoints, group with MapFeatureControlers?
+            //TODO: move to UseEndpoints, group with MapFeatureControllers?
             var featureProvider = app.ApplicationServices.GetRequiredService<IRuntimeFeatureProvider>();
             var appPartManager = app.ApplicationServices.GetRequiredService<ApplicationPartManager>();
             var actionDescriptorChangeProvider = app.ApplicationServices.GetRequiredService<FeatureRuntimeCompilationActionDescriptorChangeProvider>();
@@ -68,7 +63,6 @@ namespace ASPNETCoreRuntimeCompilation
             });
 
             //TODO: Handle putting components in another assembly
-
         }
     }
 }

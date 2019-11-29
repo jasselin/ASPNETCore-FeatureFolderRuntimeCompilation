@@ -23,7 +23,7 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc
 
             var logger = endpoints.ServiceProvider.GetRequiredService<ILogger<IEndpointRouteBuilder>>();
 
-            var assemblyNameLength = options.Assembly.GetName().Name.Length;
+            var assemblyNameLength = options.AssemblyName.Length;
             var controllers = GetControllers(options.Assembly);
             foreach (var controller in controllers)
             {

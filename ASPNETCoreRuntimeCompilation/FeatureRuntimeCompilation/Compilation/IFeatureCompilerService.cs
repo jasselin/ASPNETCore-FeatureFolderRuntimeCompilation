@@ -2,6 +2,6 @@
 {
     public interface IFeatureCompilerService
     {
-        FeatureCompilerResult Compile(string featurePath);
+        FeatureCompilerResult Compile(string cacheKey, string featurePath);
     }
 }

@@ -22,10 +22,10 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation
             if (!Directory.Exists(featurePath))
                 return null;
 
-            var assemblyName = _options.Assembly.GetName().Name;
-            var controllerTypeName = string.Concat(assemblyName, ".Features.", string.Join('.', requestValues), ".", requestValues.Last(), "Controller");
+            var featureName = string.Concat(_options.AssemblyName, ".Features.", string.Join('.', requestValues));
+            var controllerTypeName = string.Concat(featureName, ".", requestValues.Last(), "Controller");
 
-            return new FeatureMetadata(controllerTypeName, featurePath);
+            return new FeatureMetadata(featureName, controllerTypeName, featurePath);
         }
     }
 }
