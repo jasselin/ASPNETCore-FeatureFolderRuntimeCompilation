@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.Extensions.Logging;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc
@@ -48,9 +49,11 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc
                 return;
             }
 
+            var featureAssemblyRegex = new Regex(@$"{feature.Name}.\w+-\w+\-\w+\-\w+\-\w+");
+
             var parts = _appPartManager.ApplicationParts
                 .OfType<AssemblyPart>()
-                .Where(x => x.Assembly.GetName().Name == feature.Name)
+                .Where(x => featureAssemblyRegex.IsMatch(x.Name))
                 .ToArray();
 
             foreach (var part in parts)
@@ -60,7 +63,9 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc
             }
 
             _logger.LogInformation($"Adding assembly '{feature.Assembly.FullName} to ApplicationPartManager.'");
-            _appPartManager.ApplicationParts.Add(new AssemblyPart(feature.Assembly));
+            var assemblyPart = new AssemblyPart(feature.Assembly);
+            var refs = assemblyPart.GetReferencePaths();
+            _appPartManager.ApplicationParts.Add(assemblyPart);
 
             _logger.LogInformation("Triggering ActionDescriptonChangerProvider refresh.");
             _actionDescriptorChangeProvider.TokenSource.Cancel();

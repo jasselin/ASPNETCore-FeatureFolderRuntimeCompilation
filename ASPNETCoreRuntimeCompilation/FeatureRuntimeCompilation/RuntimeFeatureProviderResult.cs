@@ -10,7 +10,7 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation
             Assembly = assembly ?? throw new ArgumentNullException(nameof(assembly));
             HasChanged = isUpdated;
             ControllerType = controllerType ?? throw new ArgumentNullException(nameof(assembly));
-            Name = assembly.GetName().Name;
+            Name = assembly.GetName().Name.Substring(0, assembly.GetName().Name.LastIndexOf("."));
         }
 
         public string Name { get; }

@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.IO;
+using System.Reflection;
 
 namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration
 {
@@ -16,6 +17,7 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration
         public string AssemblyName { get; set; }
         public string FeatureNamespace => string.Concat(AssemblyName, ".Features");
         public string ProjectPath { get; set; }
+        public string AssembliesOutputPath => Path.Combine(ProjectPath, "temp", "dynamic_assemblies");
 
         // RazorReferenceManager loads references from a path, not possible at this moment to provide assemblies from memory
         public bool UseInMemoryAssemblies => false; 

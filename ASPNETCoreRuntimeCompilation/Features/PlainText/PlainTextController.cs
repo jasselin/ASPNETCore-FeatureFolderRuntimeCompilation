@@ -12,8 +12,9 @@ namespace ASPNETCoreRuntimeCompilation.Features.PlainText
                 + $"Location: {GetType().Assembly.Location}"
                 + Environment.NewLine + Environment.NewLine;
 
+            var controllerAssemblyName = GetType().Assembly.GetName().Name;
             var assemblies = AppDomain.CurrentDomain.GetAssemblies()
-                .Where(x => x.FullName == GetType().Assembly.FullName);
+                .Where(x => x.GetName().Name.StartsWith(controllerAssemblyName.Substring(0, controllerAssemblyName.LastIndexOf("."))));
 
             content += $"AppDomain assemblies ({assemblies.Count()}):" + Environment.NewLine;
 
