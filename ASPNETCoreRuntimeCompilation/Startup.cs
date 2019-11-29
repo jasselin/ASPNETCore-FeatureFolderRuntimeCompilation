@@ -63,8 +63,8 @@ namespace ASPNETCoreRuntimeCompilation
 
             app.UseEndpoints(endpoints =>
             {
-                //endpoints.MapDefaultControllerRoute(); // Attribute routing
-                endpoints.MapFeatureControllers();
+                endpoints.MapDefaultControllerRoute(); // Attribute routing
+                //endpoints.MapFeatureControllers();
             });
 
             //TODO: Handle putting components in another assembly

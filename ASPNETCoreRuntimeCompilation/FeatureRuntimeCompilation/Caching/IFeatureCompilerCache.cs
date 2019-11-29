@@ -1,4 +1,6 @@
-﻿namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Caching
+﻿using System.Reflection;
+
+namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Caching
 {
     public interface IFeatureCompilerCache
     {

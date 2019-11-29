@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Loader;
 
 namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation
 {
@@ -12,13 +13,14 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation
             Failures = failures;
         }
 
-        public FeatureCompilerResult(Assembly assembly)
+        public FeatureCompilerResult(AssemblyLoadContext assemblyLoadContext)
         {
-            Assembly = assembly;
+            AssemblyLoadContext = assemblyLoadContext;
             Failures = new List<DiagnosticMessage>();
         }
 
-        public Assembly Assembly { get; }
+        public AssemblyLoadContext AssemblyLoadContext { get; }
+        public Assembly Assembly => AssemblyLoadContext.Assemblies.First();
         public IEnumerable<TypeInfo> Types => Assembly.DefinedTypes.Select(x => x.GetTypeInfo());
         public IEnumerable<DiagnosticMessage> Failures { get; }
         public bool Success => !Failures.Any();

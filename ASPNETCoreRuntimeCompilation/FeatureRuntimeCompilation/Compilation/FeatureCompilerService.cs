@@ -1,4 +1,5 @@
-﻿using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Extensions;
+﻿using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration;
+using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Extensions;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis;
@@ -11,6 +12,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Loader;
 using System.Threading;
 
 namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation
@@ -20,18 +22,23 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation
         private IList<MetadataReference> _compilationReferences;
         private bool _compilationReferencesInitialized;
         private object _compilationReferencesLock = new object();
-        private readonly RazorProjectEngine _razorProjectEngine;
         private IList<MetadataReference> _refs;
 
-        public FeatureCompilerService(RazorProjectEngine razorProjectEngine)
+        private readonly RazorProjectEngine _razorProjectEngine; //TODO: get references elsewhere?
+        private readonly FeatureRuntimeCompilationOptions _options;
+
+        public FeatureCompilerService(RazorProjectEngine razorProjectEngine, FeatureRuntimeCompilationOptions options)
         {
             _razorProjectEngine = razorProjectEngine;
+            _options = options;
         }
 
         private CSharpCompilation GetCompilation(string assemblyName, IEnumerable<SyntaxTree> syntaxTrees)
         {
-            var compileOptions = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary).WithAssemblyIdentityComparer(DesktopAssemblyIdentityComparer.Default);
+            var compileOptions = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary)
+                .WithAssemblyIdentityComparer(DesktopAssemblyIdentityComparer.Default); //TODO: still useful?
 
+            //TODO: Remove Prextra hack
             var references = new List<MetadataReference>(CompilationReferences.Where(x => !(x.Display.Contains("Prextra.") && x.Display.Contains(".Web.dll"))));
 
             var compilation = CSharpCompilation.Create(assemblyName, options: compileOptions, syntaxTrees: syntaxTrees, references: references);
@@ -41,7 +48,9 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation
         public FeatureCompilerResult Compile(string controllerDir)
         {
             var csFiles = Directory.GetFiles(controllerDir, "*.cs", SearchOption.AllDirectories);
-            var assemblyName = Guid.NewGuid().ToString();
+
+            // Keep the same name as the original assembly
+            var assemblyName = _options.Assembly.GetName().Name;
 
             var syntaxTrees = csFiles.Select(file =>
             {
@@ -57,12 +66,19 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation
 
             var result = GetCompilation(assemblyName, syntaxTrees)
                 .Emit(assemblyStream, pdbStream, options: new EmitOptions(debugInformationFormat: DebugInformationFormat.Pdb));
+            
 
             if (!result.Success)
                 return GetCompilationFailedResult(result.Diagnostics);
 
-            var assembly = Assembly.Load(assemblyStream.ToArray(), pdbStream.ToArray());
-            return new FeatureCompilerResult(assembly);
+            // Streams must be set to position 0 before reading (Bad IL Format exceptino)
+            assemblyStream.Seek(0, SeekOrigin.Begin);
+            pdbStream.Seek(0, SeekOrigin.Begin);
+
+            var assemblyLoadContext = new AssemblyLoadContext(assemblyName, true);
+            assemblyLoadContext.LoadFromStream(assemblyStream, pdbStream);
+
+            return new FeatureCompilerResult(assemblyLoadContext);
         }
 
         private IEnumerable<MetadataReference> CompilationReferences => LazyInitializer.EnsureInitialized(ref _compilationReferences,
@@ -80,6 +96,7 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation
             return metadataReferenceFeature.References.Union(_refs).Distinct().ToList();
         }
 
+        //TODO: Remove?
         private static CSharpCompilation Rewrite(CSharpCompilation compilation)
         {
             //var rewrittenTrees = new List<SyntaxTree>();

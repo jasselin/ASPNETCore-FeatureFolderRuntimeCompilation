@@ -36,7 +36,7 @@ namespace ASPNETCoreRuntimeCompilation.FeatureFolders
             for (var i = 0; i < tokens.Length - 1; i++)
             {
                 var key = $"level{tokens.Length - i - 1}";
-                controller.RouteValues.Add(key, tokens[i]);
+                //controller.RouteValues.Add(key, tokens[i]);
                 controller.Properties.Add(key, tokens[i]);
             }
         }

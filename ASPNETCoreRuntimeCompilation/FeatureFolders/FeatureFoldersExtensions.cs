@@ -6,7 +6,7 @@ namespace ASPNETCoreRuntimeCompilation.FeatureFolders
     {
         public static IMvcBuilder AddFeatureFolders(this IMvcBuilder mvcBuilder)
         {
-            //mvcBuilder.Services.ConfigureOptions<FeatureMvcOptionsConfiguration>();
+            mvcBuilder.Services.ConfigureOptions<FeatureMvcOptionsConfiguration>();
 
             mvcBuilder.AddRazorOptions(options =>
             {

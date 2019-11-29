@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,7 +11,6 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc
         private readonly RequestDelegate _next;
 
         private readonly IRuntimeFeatureProvider _featureProvider;
-        //private readonly IFeatureControllerInfoProvider _controllerInfoProvider;
         private readonly ApplicationPartManager _appPartManager;
         private readonly FeatureRuntimeCompilationActionDescriptorChangeProvider _actionDescriptorChangeProvider;
         private readonly ILogger<FeatureRuntimeCompilationMiddleware> _logger;
@@ -25,7 +23,6 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc
             _next = next;
             _logger = logger;
             _featureProvider = featureProvider;
-            //_controllerInfoProvider = controllerInfoProvider;
             _appPartManager = appPartManager;
             _actionDescriptorChangeProvider = actionDescriptorChangeProvider;
         }

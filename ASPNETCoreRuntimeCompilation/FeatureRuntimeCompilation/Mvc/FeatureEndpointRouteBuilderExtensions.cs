@@ -14,6 +14,7 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc
 {
     public static class FeatureEndpointRouteBuilderExtensions
     {
+        //TODO: Remove, use RouteAttribute through ControllerModelConvention
         public static IEndpointRouteBuilder MapFeatureControllers(this IEndpointRouteBuilder endpoints)
         {
             var options = endpoints.ServiceProvider.GetService<FeatureRuntimeCompilationOptions>();

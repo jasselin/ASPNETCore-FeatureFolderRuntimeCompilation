@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Primitives;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -31,7 +32,10 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Caching
                 var isCached = _cacheEntries.TryGetValue(cacheKey, out cacheEntry);
                 if (isCached && cacheEntry.IsExpired())
                 {
-                    //TODO: Remove assembly if created in memory, not using static file
+                    //TODO: Does not seem to unload
+                    cacheEntry.Result.AssemblyLoadContext.Unload();
+                    GC.Collect();
+                    GC.WaitForPendingFinalizers();
 
                     _cacheEntries.Remove(cacheKey);
                     cacheEntry = null;

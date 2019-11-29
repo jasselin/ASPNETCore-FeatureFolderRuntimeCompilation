@@ -18,10 +18,12 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation
         {
             var requestValues = context.Request.Path.ToString().Trim('/').Split('/');
 
-            var assemblyName = _options.Assembly.GetName().Name;
-
-            var controllerTypeName = string.Concat(assemblyName, ".Features.", string.Join('.', requestValues), ".", requestValues.Last(), "Controller");
             var featurePath = Path.Combine(_options.ProjectPath, "Features", string.Join("\\", requestValues));
+            if (!Directory.Exists(featurePath))
+                return null;
+
+            var assemblyName = _options.Assembly.GetName().Name;
+            var controllerTypeName = string.Concat(assemblyName, ".Features.", string.Join('.', requestValues), ".", requestValues.Last(), "Controller");
 
             return new FeatureMetadata(controllerTypeName, featurePath);
         }
