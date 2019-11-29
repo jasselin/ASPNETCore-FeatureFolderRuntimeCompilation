@@ -11,7 +11,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Runtime.Loader;
 using System.Threading;
 
@@ -58,17 +57,27 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation
                 }
             });
 
-            using var assemblyStream = new MemoryStream();
-            using var pdbStream = new MemoryStream();
+            var outputPath = Path.Combine(_options.ProjectPath, "Temp", "dynamic_assemblies");
+
+            Stream CreateStream(string fileName)
+            {
+                if (_options.UseInMemoryAssemblies)
+                    return new MemoryStream();
+
+                var filePath = Path.Combine(outputPath, fileName);
+                return new FileStream(filePath, FileMode.Create);
+            }
+
+            using var assemblyStream = CreateStream(string.Concat(assemblyName, ".dll"));
+            using var pdbStream = CreateStream(string.Concat(assemblyName, ".pdb"));
 
             var result = GetCompilation(assemblyName, syntaxTrees)
                 .Emit(assemblyStream, pdbStream, options: new EmitOptions(debugInformationFormat: DebugInformationFormat.Pdb));
-            
 
             if (!result.Success)
                 return GetCompilationFailedResult(result.Diagnostics);
 
-            // Streams must be set to position 0 before reading (Bad IL Format exceptino)
+            // Streams must be set to position 0 before reading (Bad IL Format exception)
             assemblyStream.Seek(0, SeekOrigin.Begin);
             pdbStream.Seek(0, SeekOrigin.Begin);
 

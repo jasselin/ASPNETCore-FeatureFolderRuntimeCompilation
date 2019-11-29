@@ -16,5 +16,8 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration
         public string AssemblyName { get; set; }
         public string FeatureNamespace => string.Concat(AssemblyName, ".Features");
         public string ProjectPath { get; set; }
+
+        // RazorReferenceManager loads references from a path, not possible at this moment to provide assemblies from memory
+        public bool UseInMemoryAssemblies => false; 
     }
 }
