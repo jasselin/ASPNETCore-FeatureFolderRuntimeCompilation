@@ -27,7 +27,6 @@ namespace ASPNETCoreRuntimeCompilation
         {
             services
                 .AddControllersWithViews() //TODO: check if there is a way to add mvc without controller discovery
-                .AddRazorRuntimeCompilation()
                 .AddFeatureFolders()
                 .AddFeatureRuntimeCompilation(new FeatureRuntimeCompilationOptions(
                     typeof(Startup).Assembly, // Assembly to be dynamically compiled at runtime

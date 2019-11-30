@@ -2,8 +2,10 @@
 using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation;
 using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Razor.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.IO;
@@ -39,6 +41,16 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration
                 Directory.Delete(options.AssembliesOutputPath, true);
 
             Directory.CreateDirectory(options.AssembliesOutputPath);
+
+            mvcBuilder.AddRazorRuntimeCompilation(opts =>
+            {
+                // References are missing because we remove the main assembly application part
+                foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies().Where(x => x != options.Assembly))
+                    opts.AdditionalReferencePaths.Add(assembly.Location);
+
+                opts.AdditionalReferencePaths.Add(typeof(IHtmlContent).Assembly.Location); // TODO: remove?
+                opts.AdditionalReferencePaths.Add(typeof(RazorCompiledItem).Assembly.Location); // TODO: remove?
+            });
 
             return mvcBuilder;
         }
