@@ -51,6 +51,10 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation
                 if (_options.UseInMemoryAssemblies)
                     return new MemoryStream();
 
+                // Something directory not created before first request triggers compilation
+                if (!Directory.Exists(_options.AssembliesOutputPath))
+                    Directory.CreateDirectory(_options.AssembliesOutputPath);
+
                 return new FileStream(filePath, FileMode.Create);
             }
 
@@ -76,7 +80,7 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation
 
         private AssemblyLoadContext CreateAssemblyLoadContext(string contextName, string assemblyFilePath, Stream assemblyStream, Stream pdbStream)
         {
-            var assemblyLoadContext = new AssemblyLoadContext(contextName, true);
+            var assemblyLoadContext = new AssemblyLoadContext(contextName, false); // resolving collectible assembly not supported
 
             if (_options.UseInMemoryAssemblies)
             {
@@ -121,7 +125,7 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation
         private IList<MetadataReference> GetCompilationReferences()
         {
             if (_refs == null)
-                _refs = AppDomain.CurrentDomain.GetReferences();
+                _refs = AppDomain.CurrentDomain.GetReferences(); //TODO: useful? maybe razor engine references are enough
 
             var metadataReferenceFeature = _razorProjectEngine.EngineFeatures.SingleOrDefault(x => x is IMetadataReferenceFeature) as IMetadataReferenceFeature;
 

@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.IO;
 using System.Linq;
+using System.Threading;
 
 namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration
 {
@@ -51,6 +52,8 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration
                 opts.AdditionalReferencePaths.Add(typeof(IHtmlContent).Assembly.Location); // TODO: remove?
                 opts.AdditionalReferencePaths.Add(typeof(RazorCompiledItem).Assembly.Location); // TODO: remove?
             });
+
+            FeatureAssemblyLocator.Init();
 
             return mvcBuilder;
         }
