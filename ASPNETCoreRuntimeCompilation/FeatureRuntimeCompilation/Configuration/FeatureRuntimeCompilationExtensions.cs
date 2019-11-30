@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.IO;
 using System.Linq;
 
 namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration
@@ -33,6 +34,11 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration
             services.AddTransient<IFeatureMetadataProvider, FeatureMetadataProvider>();
             services.AddSingleton<IFeatureCompilerCache, FeatureCompilerCache>();
             services.AddTransient<IFeatureCompilerService, FeatureCompilerService>();
+
+            if (Directory.Exists(options.AssembliesOutputPath))
+                Directory.Delete(options.AssembliesOutputPath, true);
+
+            Directory.CreateDirectory(options.AssembliesOutputPath);
 
             return mvcBuilder;
         }

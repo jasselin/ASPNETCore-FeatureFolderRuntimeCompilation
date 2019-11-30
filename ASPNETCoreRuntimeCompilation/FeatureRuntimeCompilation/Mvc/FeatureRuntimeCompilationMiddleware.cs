@@ -64,7 +64,6 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc
 
             _logger.LogInformation($"Adding assembly '{feature.Assembly.FullName} to ApplicationPartManager.'");
             var assemblyPart = new AssemblyPart(feature.Assembly);
-            var refs = assemblyPart.GetReferencePaths();
             _appPartManager.ApplicationParts.Add(assemblyPart);
 
             _logger.LogInformation("Triggering ActionDescriptonChangerProvider refresh.");
