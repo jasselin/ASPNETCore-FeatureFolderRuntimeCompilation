@@ -3,4 +3,6 @@
 <h1>Feature A</h1>
 <p>@Model.Message</p>
 
-@await Html.PartialAsync("PartialView")
+@Html.TextBoxFor(x => x.InputText)
+
+@await Html.PartialAsync("PartialView", Model.SubViewModel)
