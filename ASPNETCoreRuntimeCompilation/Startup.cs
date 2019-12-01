@@ -2,6 +2,7 @@
 using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation;
 using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration;
 using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc;
+using ASPNETCoreRuntimeCompilation.Features.FeatureA;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
@@ -31,6 +32,8 @@ namespace ASPNETCoreRuntimeCompilation
                 .AddFeatureRuntimeCompilation(new FeatureRuntimeCompilationOptions(
                     typeof(Startup).Assembly, // Assembly to be dynamically compiled at runtime
                     _env.ContentRootPath));
+
+            services.AddTransient<IFeatureADependency, FeatureADependency>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

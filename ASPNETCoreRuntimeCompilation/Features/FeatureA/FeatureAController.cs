@@ -4,11 +4,18 @@ namespace ASPNETCoreRuntimeCompilation.Features.FeatureA
 {
     public class FeatureAController : Controller
     {
+        private readonly IFeatureADependency _dependency;
+
+        public FeatureAController(IFeatureADependency dependency)
+        {
+            _dependency = dependency;
+        }
+
         public IActionResult Index()
         {
             var viewModel = new FeatureAViewModel
             {
-                Message = "Feature A message",
+                Message = _dependency.GetMessage(),
                 InputText = 123
                 //InputText = "ABCD"
             };
