@@ -1,8 +1,13 @@
 ﻿using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation;
+using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc;
+using Microsoft.AspNetCore.Mvc.ApplicationParts;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Primitives;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 
 namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Caching
 {
@@ -12,11 +17,16 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Caching
         private readonly object _cacheLock = new object();
 
         private readonly IFeatureCompilerService _compilerService;
+        private readonly ApplicationPartManager _appPartManager;
+        private readonly FeatureRuntimeCompilationActionDescriptorChangeProvider _actionDescriptorChangeProvider;
+        private readonly EndpointDataSource _endpointDataSource;
 
-        public FeatureCompilerCache(IFeatureCompilerService compilerService)
+        public FeatureCompilerCache(IFeatureCompilerService compilerService, ApplicationPartManager appPartManager, EndpointDataSource endpointDataSource, FeatureRuntimeCompilationActionDescriptorChangeProvider actionDescriptorChangeProvider)
         {
             _compilerService = compilerService;
-
+            _appPartManager = appPartManager;
+            _actionDescriptorChangeProvider = actionDescriptorChangeProvider;
+            _endpointDataSource = endpointDataSource;
             _cacheEntries = new Dictionary<string, FeatureCompilerCacheResult>();
         }
 
@@ -30,13 +40,40 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Caching
                 var isCached = _cacheEntries.TryGetValue(cacheKey, out cacheEntry);
                 if (isCached && cacheEntry.IsExpired())
                 {
-                    //TODO: Does not seem to unload
-                    cacheEntry.Result.AssemblyLoadContext.Unload();
-                    GC.Collect();
-                    GC.WaitForPendingFinalizers();
+                    var part = _appPartManager.ApplicationParts.OfType<AssemblyPart>().SingleOrDefault(x => x.Assembly == cacheEntry.Result.Assembly);
+                    _appPartManager.ApplicationParts.Remove(part);
+                    
+                    // Removes controller endpoint from cache
+                    _actionDescriptorChangeProvider.TokenSource.Cancel();
+
+                    var ct = _endpointDataSource.GetChangeToken();
+                    //var pi = ct.GetType().GetProperty("Token", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                    //var cancellationToken = (CancellationToken)pi.GetValue(ct);
+                    //cancellationToken.
+
+                    //var endpoints = _endpointDataSource.Endpoints.Where(x => x.DisplayName.Contains(cacheEntry.Result.Assembly.GetName().Name));
+                    //foreach (var endpoint in endpoints)
+                    //{
+                    //    _endpointDataSource.Endpoints.r
+                    //}
 
                     _cacheEntries.Remove(cacheKey);
+                    var assemblyLoadContextRef = cacheEntry.Result.AssemblyLoadContextRef;
                     cacheEntry = null;
+
+                    //TODO: Does not seem to unload
+                    var assemblyLoadContext = assemblyLoadContextRef.Target as FeatureAssemblyLoadContext;
+                    assemblyLoadContext.Unload();
+                    for (var i = 0; assemblyLoadContextRef.IsAlive && (i < 10); i++)
+                    {
+                        GC.Collect();
+                        GC.WaitForPendingFinalizers();
+                    }
+
+                    //if (assemblyLoadContextRef.IsAlive)
+                    //    throw new Exception("Still alive");
+
+                    //TODO: delete assembly file
                 }
 
                 if (cacheEntry == null)

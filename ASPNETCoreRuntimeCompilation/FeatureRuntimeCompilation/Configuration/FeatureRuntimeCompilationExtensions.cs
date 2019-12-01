@@ -45,15 +45,15 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration
 
             mvcBuilder.AddRazorRuntimeCompilation(opts =>
             {
-                // References are missing because we remove the main assembly application part
-                foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies().Where(x => x != options.Assembly))
-                    opts.AdditionalReferencePaths.Add(assembly.Location);
+                //// References are missing because we remove the main assembly application part
+                //foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies().Where(x => x != options.Assembly))
+                //    opts.AdditionalReferencePaths.Add(assembly.Location);
 
-                opts.AdditionalReferencePaths.Add(typeof(IHtmlContent).Assembly.Location); // TODO: remove?
-                opts.AdditionalReferencePaths.Add(typeof(RazorCompiledItem).Assembly.Location); // TODO: remove?
+                //opts.AdditionalReferencePaths.Add(typeof(IHtmlContent).Assembly.Location); // TODO: remove?
+                //opts.AdditionalReferencePaths.Add(typeof(RazorCompiledItem).Assembly.Location); // TODO: remove?
             });
 
-            FeatureAssemblyLocator.Init();
+            //FeatureAssemblyLocator.Init();
 
             return mvcBuilder;
         }

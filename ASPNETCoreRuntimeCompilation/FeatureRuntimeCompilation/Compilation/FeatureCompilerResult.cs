@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -13,14 +14,22 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation
             Failures = failures;
         }
 
-        public FeatureCompilerResult(AssemblyLoadContext assemblyLoadContext)
+        public FeatureCompilerResult(WeakReference assemblyLoadContextRef)
         {
-            AssemblyLoadContext = assemblyLoadContext;
+            AssemblyLoadContextRef = assemblyLoadContextRef;
             Failures = new List<DiagnosticMessage>();
         }
 
-        public AssemblyLoadContext AssemblyLoadContext { get; }
-        public Assembly Assembly => AssemblyLoadContext.Assemblies.First();
+        public WeakReference AssemblyLoadContextRef { get; }
+        public Assembly Assembly
+        {
+            get
+            {
+                var assemblyLoadContext = AssemblyLoadContextRef.Target as FeatureAssemblyLoadContext;
+                return assemblyLoadContext.Assemblies.First();
+            }
+        }
+        //public Assembly Assembly => AssemblyLoadContext.Assemblies.First();
         public IEnumerable<TypeInfo> Types => Assembly.DefinedTypes.Select(x => x.GetTypeInfo());
         public IEnumerable<DiagnosticMessage> Failures { get; }
         public bool Success => !Failures.Any();

@@ -74,13 +74,14 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation
                 return GetCompilationFailedResult(result.Diagnostics);
 
             var assemblyLoadContext = CreateAssemblyLoadContext(tempAssemblyName, assemblyFilePath, assemblyStream, pdbStream);
+            var assemblyLoadContextRef = new WeakReference(assemblyLoadContext, true);
 
-            return new FeatureCompilerResult(assemblyLoadContext);
+            return new FeatureCompilerResult(assemblyLoadContextRef);
         }
 
-        private AssemblyLoadContext CreateAssemblyLoadContext(string contextName, string assemblyFilePath, Stream assemblyStream, Stream pdbStream)
+        private FeatureAssemblyLoadContext CreateAssemblyLoadContext(string contextName, string assemblyFilePath, Stream assemblyStream, Stream pdbStream)
         {
-            var assemblyLoadContext = new AssemblyLoadContext(contextName, false); // resolving collectible assembly not supported
+            var assemblyLoadContext = new FeatureAssemblyLoadContext();
 
             if (_options.UseInMemoryAssemblies)
             {
