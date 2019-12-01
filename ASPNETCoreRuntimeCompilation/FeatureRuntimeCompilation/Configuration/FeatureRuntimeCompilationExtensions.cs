@@ -52,8 +52,8 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration
                 foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies().Where(x => x != options.Assembly))
                     opts.AdditionalReferencePaths.Add(assembly.Location);
 
-                opts.AdditionalReferencePaths.Add(typeof(IHtmlContent).Assembly.Location); // TODO: remove?
-                opts.AdditionalReferencePaths.Add(typeof(RazorCompiledItem).Assembly.Location); // TODO: remove?
+                opts.AdditionalReferencePaths.Add(typeof(IHtmlContent).Assembly.Location);
+                opts.AdditionalReferencePaths.Add(typeof(RazorCompiledItem).Assembly.Location);
             });
 
             FeatureAssemblyLocator.Init();

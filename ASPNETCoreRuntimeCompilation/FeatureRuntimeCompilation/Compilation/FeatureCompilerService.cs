@@ -36,7 +36,6 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation
             var compileOptions = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary);
                 //.WithAssemblyIdentityComparer(DesktopAssemblyIdentityComparer.Default); //TODO: still useful?
 
-            //TODO: Remove Prextra hack
             //var references = new List<MetadataReference>(CompilationReferences.Where(x => !(x.Display.Contains("Prextra.") && x.Display.Contains(".Web.dll"))));
 
             return CSharpCompilation.Create(assemblyName, options: compileOptions, syntaxTrees: syntaxTrees, references: CompilationReferences);
