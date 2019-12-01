@@ -1,5 +1,4 @@
 ﻿using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration;
-using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Extensions;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis;
@@ -21,7 +20,7 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation
         private IList<MetadataReference> _compilationReferences;
         private bool _compilationReferencesInitialized;
         private object _compilationReferencesLock = new object();
-        private IList<MetadataReference> _refs;
+        //private IList<MetadataReference> _refs;
 
         private readonly RazorProjectEngine _razorProjectEngine; //TODO: get references elsewhere?
         private readonly FeatureRuntimeCompilationOptions _options;
@@ -34,14 +33,14 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation
 
         private CSharpCompilation GetCompilation(string assemblyName, IEnumerable<SyntaxTree> syntaxTrees)
         {
-            var compileOptions = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary)
-                .WithAssemblyIdentityComparer(DesktopAssemblyIdentityComparer.Default); //TODO: still useful?
+            var compileOptions = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary);
+                //.WithAssemblyIdentityComparer(DesktopAssemblyIdentityComparer.Default); //TODO: still useful?
 
             //TODO: Remove Prextra hack
-            var references = new List<MetadataReference>(CompilationReferences.Where(x => !(x.Display.Contains("Prextra.") && x.Display.Contains(".Web.dll"))));
+            //var references = new List<MetadataReference>(CompilationReferences.Where(x => !(x.Display.Contains("Prextra.") && x.Display.Contains(".Web.dll"))));
 
-            var compilation = CSharpCompilation.Create(assemblyName, options: compileOptions, syntaxTrees: syntaxTrees, references: references);
-            return Rewrite(compilation);
+            return CSharpCompilation.Create(assemblyName, options: compileOptions, syntaxTrees: syntaxTrees, references: CompilationReferences);
+            //return Rewrite(compilation);
         }
 
         public FeatureCompilerResult Compile(string assemblyName, string controllerDir)
@@ -51,7 +50,7 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation
                 if (_options.UseInMemoryAssemblies)
                     return new MemoryStream();
 
-                // Something directory not created before first request triggers compilation
+                // Sometimes, directory not created before first request triggers compilation
                 if (!Directory.Exists(_options.AssembliesOutputPath))
                     Directory.CreateDirectory(_options.AssembliesOutputPath);
 
@@ -124,30 +123,35 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation
 
         private IList<MetadataReference> GetCompilationReferences()
         {
-            if (_refs == null)
-                _refs = AppDomain.CurrentDomain.GetReferences(); //TODO: useful? maybe razor engine references are enough
+            //if (_refs == null)
+            //    _refs = AppDomain.CurrentDomain.GetReferences(); //TODO: useful? maybe razor engine references are enough
 
             var metadataReferenceFeature = _razorProjectEngine.EngineFeatures.SingleOrDefault(x => x is IMetadataReferenceFeature) as IMetadataReferenceFeature;
+            //var references = metadataReferenceFeature.References
+            //    .Where(x => !x.Display.EndsWith(string.Concat(_options.AssemblyName, ".dll"), StringComparison.InvariantCultureIgnoreCase))
+            //    .ToList();
 
-            return metadataReferenceFeature.References.Union(_refs).Distinct().ToList();
+            //return references;
+            return metadataReferenceFeature.References.ToList();
+            //return metadataReferenceFeature.References.Union(_refs).Distinct().ToList();
         }
 
         //TODO: Remove?
-        private static CSharpCompilation Rewrite(CSharpCompilation compilation)
-        {
-            //var rewrittenTrees = new List<SyntaxTree>();
-            //foreach (var tree in compilation.SyntaxTrees)
-            //{
-            //    var semanticModel = compilation.GetSemanticModel(tree, true);
-            //    var rewriter = new ExpressionRewriter(semanticModel);
+        //private static CSharpCompilation Rewrite(CSharpCompilation compilation)
+        //{
+        //    //var rewrittenTrees = new List<SyntaxTree>();
+        //    //foreach (var tree in compilation.SyntaxTrees)
+        //    //{
+        //    //    var semanticModel = compilation.GetSemanticModel(tree, true);
+        //    //    var rewriter = new ExpressionRewriter(semanticModel);
 
-            //    var rewrittenTree = tree.WithRootAndOptions(rewriter.Visit(tree.GetRoot()), tree.Options);
-            //    rewrittenTrees.Add(rewrittenTree);
-            //}
+        //    //    var rewrittenTree = tree.WithRootAndOptions(rewriter.Visit(tree.GetRoot()), tree.Options);
+        //    //    rewrittenTrees.Add(rewrittenTree);
+        //    //}
 
-            //return compilation.RemoveAllSyntaxTrees().AddSyntaxTrees(rewrittenTrees);
-            return compilation;
-        }
+        //    //return compilation.RemoveAllSyntaxTrees().AddSyntaxTrees(rewrittenTrees);
+        //    return compilation;
+        //}
 
         private FeatureCompilerResult GetCompilationFailedResult(IEnumerable<Diagnostic> diagnostics)
         {
