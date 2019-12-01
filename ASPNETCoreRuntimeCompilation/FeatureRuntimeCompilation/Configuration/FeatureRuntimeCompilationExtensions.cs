@@ -45,6 +45,9 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration
 
             mvcBuilder.AddRazorRuntimeCompilation(opts =>
             {
+                opts.FileProviders.Clear();
+                opts.FileProviders.Add(new FeatureRuntimeCompilationPhysicalFileProvider(options.ProjectPath));
+
                 // References are missing because we remove the main assembly application part
                 foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies().Where(x => x != options.Assembly))
                     opts.AdditionalReferencePaths.Add(assembly.Location);

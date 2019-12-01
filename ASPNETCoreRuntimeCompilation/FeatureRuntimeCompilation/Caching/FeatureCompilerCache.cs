@@ -30,12 +30,13 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Caching
                 var isCached = _cacheEntries.TryGetValue(cacheKey, out cacheEntry);
                 if (isCached && cacheEntry.IsExpired())
                 {
+                    _cacheEntries.Remove(cacheKey);
+
                     //TODO: Does not seem to unload
-                    cacheEntry.Result.AssemblyLoadContext.Unload();
+                    //cacheEntry.Result.AssemblyLoadContext.Unload();
                     GC.Collect();
                     GC.WaitForPendingFinalizers();
 
-                    _cacheEntries.Remove(cacheKey);
                     cacheEntry = null;
                 }
 
@@ -61,7 +62,7 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Caching
 
                     newAssembly = true;
                     cacheEntry = new FeatureCompilerCacheResult(compilerResult, expirationTokens);
-                    _cacheEntries.Add(cacheKey, cacheEntry);
+                    _cacheEntries.Add(cacheKey, cacheEntry); //TODO: not caching leads to lower memory usage, confirm and fix cache exit?
                 }
             }
 
