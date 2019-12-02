@@ -18,7 +18,6 @@
     "ASPNETCoreRuntimeCompilation": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "featurea",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },

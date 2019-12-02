@@ -2,6 +2,7 @@
 using System.Linq;
 using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
 
 namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation
 {
@@ -16,7 +17,8 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation
 
         public FeatureMetadata GetMetadataFor(HttpContext context)
         {
-            var requestValues = context.Request.Path.ToString().Trim('/').Split('/');
+            var routeData = context.GetRouteData();
+            var requestValues = routeData.Values.Where(x => x.Key != "action" && x.Key != "controller");
 
             var featurePath = Path.Combine(_options.ProjectPath, "Features", string.Join("\\", requestValues));
             if (!Directory.Exists(featurePath))

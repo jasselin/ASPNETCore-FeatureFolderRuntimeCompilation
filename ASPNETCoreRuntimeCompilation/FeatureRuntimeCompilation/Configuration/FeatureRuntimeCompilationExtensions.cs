@@ -89,7 +89,7 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration
                 throw new Exception($"Assembly '{options.Assembly.FullName}' is not loaded by the application.");
 
             //TODO: don't include controllerfeature from the start
-            appPartManager.ApplicationParts.Remove(assemblyPart);
+            //appPartManager.ApplicationParts.Remove(assemblyPart); // commented to keep route data
         }
     }
 }

@@ -14,7 +14,7 @@ namespace ASPNETCoreRuntimeCompilation.Features.PlainText
 
             var controllerAssemblyName = GetType().Assembly.GetName().Name;
             var assemblies = AppDomain.CurrentDomain.GetAssemblies()
-                .Where(x => x.GetName().Name.StartsWith(controllerAssemblyName.Substring(0, controllerAssemblyName.LastIndexOf("."))));
+                .Where(x => x.GetName().Name.StartsWith(controllerAssemblyName));
 
             content += $"AppDomain assemblies ({assemblies.Count()}):" + Environment.NewLine;
 

@@ -6,6 +6,8 @@
 
     <!-- Disabled when RazorRuntimeCompilation is enabled -->
     <RazorCompileOnBuild>False</RazorCompileOnBuild>
+
+    <PreserveCompilationReferences>true</PreserveCompilationReferences>
   </PropertyGroup>
 
   <ItemGroup>
