@@ -18,6 +18,7 @@
     "ASPNETCoreRuntimeCompilation": {
       "commandName": "Project",
       "launchBrowser": true,
+      "launchUrl": "plaintext",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },

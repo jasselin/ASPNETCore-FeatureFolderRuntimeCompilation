@@ -4,8 +4,10 @@ using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Razor.Hosting;
+using Microsoft.AspNetCore.Routing.Matching;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.IO;
@@ -30,6 +32,8 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration
             //services.AddSingleton<IFeatureRuntimeCompilationServiceProvider, FeatureRuntimeCompilationServiceProvider>();
 
             //services.AddSingleton<IControllerActivator, FeatureRuntimeCompilationControllerActivator>();
+            services.AddSingleton<EndpointSelector, FeatureEndpointSelector>();
+
             services.AddSingleton<FeatureRuntimeCompilationActionDescriptorChangeProvider>();
             services.AddSingleton<IActionDescriptorChangeProvider>(sp => sp.GetService<FeatureRuntimeCompilationActionDescriptorChangeProvider>());
 

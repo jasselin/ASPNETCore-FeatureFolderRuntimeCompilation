@@ -54,10 +54,10 @@ namespace ASPNETCoreRuntimeCompilation
             var actionDescriptorChangeProvider = app.ApplicationServices.GetRequiredService<FeatureRuntimeCompilationActionDescriptorChangeProvider>();
             app.UseMiddleware<FeatureRuntimeCompilationMiddleware>(featureProvider, appPartManager, actionDescriptorChangeProvider); //TODO: Extension method 
 
+            app.UseAuthorization();
+
             // Removes dynamically compiled assemblies from ApplicationPartManager after ControllerModelConvention are applied.
             //app.UseFeatureRuntimeCompilation(); // TODO: refactor, merge with previous extension method
-
-            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {

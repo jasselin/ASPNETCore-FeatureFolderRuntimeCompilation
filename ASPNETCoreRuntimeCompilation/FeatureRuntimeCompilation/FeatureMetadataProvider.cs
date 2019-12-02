@@ -18,7 +18,7 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation
         public FeatureMetadata GetMetadataFor(HttpContext context)
         {
             var routeData = context.GetRouteData();
-            var requestValues = routeData.Values.Where(x => x.Key != "action" && x.Key != "controller");
+            var requestValues = routeData.Values.Where(x => x.Key != "action" && x.Key != "controller").Select(x => x.Value);
 
             var featurePath = Path.Combine(_options.ProjectPath, "Features", string.Join("\\", requestValues));
             if (!Directory.Exists(featurePath))

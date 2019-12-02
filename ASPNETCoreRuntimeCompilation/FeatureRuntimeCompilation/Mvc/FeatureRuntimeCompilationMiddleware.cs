@@ -1,5 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.AspNetCore.Routing.Matching;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -45,9 +48,12 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc
             if (!feature.HasChanged)
             {
                 _logger.LogInformation("Feature has not changed.");
+                SetEndpoint(context, feature);
                 await _next(context);
                 return;
             }
+
+            context.Items["AAA"] = feature;
 
             var featureAssemblyRegex = new Regex(@$"{feature.Name}.\w+-\w+\-\w+\-\w+\-\w+");
 
@@ -69,9 +75,29 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc
             _logger.LogInformation("Triggering ActionDescriptonChangerProvider refresh.");
             _actionDescriptorChangeProvider.TokenSource.Cancel();
 
+            SetEndpoint(context, feature);
+
             //context.Items[FeatureRuntimeCompilation.HttpContextItemKey] = feature.ControllerType;
 
             await _next(context);
+        }
+
+        private void SetEndpoint(HttpContext context, RuntimeFeatureProviderResult feature)
+        {
+            var eds = context.RequestServices.GetRequiredService<EndpointDataSource>();
+            var endpoints = eds.Endpoints.Where(x => x.DisplayName.Contains(feature.Name, System.StringComparison.InvariantCultureIgnoreCase));
+            context.SetEndpoint(endpoints.Last()); // TODO: match current assembly
+        }
+    }
+
+    public class FeatureEndpointSelector : EndpointSelector
+    {
+        public override Task SelectAsync(HttpContext httpContext, CandidateSet candidates)
+        {
+            var candidate = candidates[0]; // doesn't matter, switched later by middleware
+            httpContext.SetEndpoint(candidate.Endpoint);
+            httpContext.Request.RouteValues = candidate.Values;
+            return Task.CompletedTask;
         }
     }
 }
