@@ -46,13 +46,15 @@ namespace ASPNETCoreRuntimeCompilation
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
+            app.UseFeatureRuntimeCompilation();
+
             app.UseRouting();
 
             //TODO: move to UseEndpoints, group with MapFeatureControllers?
-            var featureProvider = app.ApplicationServices.GetRequiredService<IRuntimeFeatureProvider>();
-            var appPartManager = app.ApplicationServices.GetRequiredService<ApplicationPartManager>();
-            var actionDescriptorChangeProvider = app.ApplicationServices.GetRequiredService<FeatureRuntimeCompilationActionDescriptorChangeProvider>();
-            app.UseMiddleware<FeatureRuntimeCompilationMiddleware>(featureProvider, appPartManager, actionDescriptorChangeProvider); //TODO: Extension method 
+            //var featureProvider = app.ApplicationServices.GetRequiredService<IRuntimeFeatureProvider>();
+            //var appPartManager = app.ApplicationServices.GetRequiredService<ApplicationPartManager>();
+            //var actionDescriptorChangeProvider = app.ApplicationServices.GetRequiredService<FeatureRuntimeCompilationActionDescriptorChangeProvider>();
+            //app.UseMiddleware<FeatureRuntimeCompilationMiddleware>(featureProvider, appPartManager, actionDescriptorChangeProvider); //TODO: Extension method 
 
             app.UseAuthorization();
 

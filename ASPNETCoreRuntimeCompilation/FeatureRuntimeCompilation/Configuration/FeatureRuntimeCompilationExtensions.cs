@@ -13,6 +13,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration
 {
@@ -37,10 +38,12 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration
             services.AddSingleton<FeatureRuntimeCompilationActionDescriptorChangeProvider>();
             services.AddSingleton<IActionDescriptorChangeProvider>(sp => sp.GetService<FeatureRuntimeCompilationActionDescriptorChangeProvider>());
 
+            services.AddSingleton<RuntimeFeatureCompilationWatcher>();
+
             services.AddSingleton<IRuntimeFeatureProvider, RuntimeFeatureProvider>();
             services.AddTransient<IFeatureMetadataProvider, FeatureMetadataProvider>();
             services.AddSingleton<IFeatureCompilerCache, FeatureCompilerCache>();
-            services.AddTransient<IFeatureCompilerService, FeatureCompilerService>();
+            services.AddSingleton<IFeatureCompilerService, FeatureCompilerService>();
 
             if (Directory.Exists(options.AssembliesOutputPath))
                 Directory.Delete(options.AssembliesOutputPath, true);
@@ -75,7 +78,11 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration
         {
             var options = app.ApplicationServices.GetRequiredService<FeatureRuntimeCompilationOptions>();
 
-            RemoveAssemblyFromApplicationPartManager(app, options);
+            //RemoveAssemblyFromApplicationPartManager(app, options);
+
+            var watcher = app.ApplicationServices.GetRequiredService<RuntimeFeatureCompilationWatcher>();
+            Task.Run(() => watcher.Watch(options));
+            //app.UseMiddleware<FeatureRuntimeCompilationMiddleware2>();
 
             return app;
         }
