@@ -1,7 +1,6 @@
 ﻿using System.IO;
 using System.Linq;
 using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 
 namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation
@@ -15,10 +14,9 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation
             _options = options;
         }
 
-        public FeatureMetadata GetMetadataFor(HttpContext context)
+        public FeatureMetadata GetMetadataFor(RouteValueDictionary routeValues)
         {
-            var routeData = context.GetRouteData();
-            var requestValues = routeData.Values.Where(x => x.Key != "action" && x.Key != "controller").Select(x => x.Value);
+            var requestValues = routeValues.Where(x => x.Key != "action" && x.Key != "controller").Select(x => x.Value);
 
             var featurePath = Path.Combine(_options.ProjectPath, "Features", string.Join("\\", requestValues));
             if (!Directory.Exists(featurePath))
@@ -32,8 +30,9 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation
 
         public FeatureMetadata GetMetadataFor(string featurePath)
         {
-            var featureName = new DirectoryInfo(featurePath).Name;
-            var controllerTypeName = string.Concat(_options.FeatureNamespace, ".", featureName, ".", featureName, "Controller"); // TODO: fix
+            var controllerName = new DirectoryInfo(featurePath).Name;
+            var featureName = string.Concat(_options.FeatureNamespace, featurePath.Substring(_options.FeaturesPath.Length).Replace("\\", "."));
+            var controllerTypeName = string.Concat(featureName, ".", controllerName, "Controller"); // TODO: fix
 
             return new FeatureMetadata(featureName, controllerTypeName, featurePath);
         }

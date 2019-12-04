@@ -20,6 +20,12 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Caching
             _cacheEntries = new Dictionary<string, FeatureCompilerCacheResult>();
         }
 
+        public (FeatureCompilerCacheResult, bool NewAssembly) Get(string cacheKey)
+        {
+            _cacheEntries.TryGetValue(cacheKey, out var cacheEntry);
+            return (cacheEntry, false);
+        }
+
         public (FeatureCompilerCacheResult, bool NewAssembly) GetOrAdd(string cacheKey, string featurePath)
         {
             FeatureCompilerCacheResult cacheEntry;

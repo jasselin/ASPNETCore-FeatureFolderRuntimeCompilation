@@ -44,11 +44,9 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation
             {
                 Path = configFolderPath,
                 NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.DirectoryName | NotifyFilters.FileName,
-                IncludeSubdirectories = true
+                IncludeSubdirectories = true,
+                Filter = "*.cs"
             };
-
-            watcher.Filters.Add("*.cs");
-            //watcher.Filters.Add("*.cshtml");
 
             void changeEvent(object s, FileSystemEventArgs e)
             {

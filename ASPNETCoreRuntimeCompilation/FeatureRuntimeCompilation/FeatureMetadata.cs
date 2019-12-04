@@ -4,12 +4,12 @@
     {
         public FeatureMetadata(string featureName, string controllerTypeName, string featurePath)
         {
-            FeatureName = featureName.ToLower(); // Case-sensitive cache key
+            CacheKey = featureName.ToLower(); // Case-sensitive cache key
             ControllerTypeName = controllerTypeName;
             FeaturePath = featurePath;
         }
 
-        public string FeatureName { get; }
+        public string CacheKey { get; }
         public string ControllerTypeName { get; }
         public string FeaturePath { get; }
     }

@@ -2,6 +2,7 @@
 using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation;
 using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
 using System;
 using System.Linq;
 
@@ -22,11 +23,12 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation
 
         public RuntimeFeatureProviderResult GetFeature(HttpContext context)
         {
-            var metadata = _featureMetadataProvider.GetMetadataFor(context);
+            var routeData = context.GetRouteData();
+            var metadata = _featureMetadataProvider.GetMetadataFor(routeData.Values);
             if (metadata == null)
                 return null;
 
-            var (cacheResult, newAssembly) = _compilerCache.GetOrAdd(metadata.FeatureName, metadata.FeaturePath);
+            var (cacheResult, newAssembly) = _compilerCache.GetOrAdd(metadata.CacheKey, metadata.FeaturePath);
 
             var compilerResult = cacheResult.Result;
             if (!compilerResult.Success)
@@ -43,7 +45,7 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation
             if (metadata == null)
                 return null;
 
-            var (cacheResult, newAssembly) = _compilerCache.GetOrAdd(metadata.FeatureName, metadata.FeaturePath);
+            var (cacheResult, newAssembly) = _compilerCache.GetOrAdd(metadata.CacheKey, metadata.FeaturePath);
 
             var compilerResult = cacheResult.Result;
             if (!compilerResult.Success)

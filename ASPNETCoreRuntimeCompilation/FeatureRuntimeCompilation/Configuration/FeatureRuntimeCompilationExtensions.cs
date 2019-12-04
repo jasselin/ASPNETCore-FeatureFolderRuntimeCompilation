@@ -3,9 +3,11 @@ using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation;
 using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Html;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation;
 using Microsoft.AspNetCore.Razor.Hosting;
 using Microsoft.AspNetCore.Routing.Matching;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,11 +30,13 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration
             // Add controllers to service provider to be resolved by FeatureRuntimeCompilationControllerActivator
             //RegisterControllers(services, options);
 
-            //services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             //services.AddSingleton<IFeatureRuntimeCompilationServiceProvider, FeatureRuntimeCompilationServiceProvider>();
 
             //services.AddSingleton<IControllerActivator, FeatureRuntimeCompilationControllerActivator>();
+
+            services.AddSingleton<RazorReferenceManager, FeatureRazorReferenceManager>();
             services.AddSingleton<EndpointSelector, FeatureEndpointSelector>();
 
             services.AddSingleton<FeatureRuntimeCompilationActionDescriptorChangeProvider>();

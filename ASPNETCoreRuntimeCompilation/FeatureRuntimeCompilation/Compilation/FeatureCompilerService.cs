@@ -38,7 +38,7 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation
 
             //var references = new List<MetadataReference>(CompilationReferences.Where(x => !(x.Display.Contains("Prextra.") && x.Display.Contains(".Web.dll"))));
 
-            return CSharpCompilation.Create(assemblyName, options: compileOptions, syntaxTrees: syntaxTrees, references: CompilationReferences);
+            return CSharpCompilation.Create(assemblyName, options: compileOptions, syntaxTrees: syntaxTrees, references: GetCompilationReferences());
             //return Rewrite(compilation);
         }
 
@@ -115,18 +115,19 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation
             return syntaxTrees;
         }
 
-        private IEnumerable<MetadataReference> CompilationReferences => LazyInitializer.EnsureInitialized(ref _compilationReferences,
-                                                                                                          ref _compilationReferencesInitialized,
-                                                                                                          ref _compilationReferencesLock,
-                                                                                                          GetCompilationReferences);
+        //private IEnumerable<MetadataReference> CompilationReferences => LazyInitializer.EnsureInitialized(ref _compilationReferences,
+        //                                                                                                  ref _compilationReferencesInitialized,
+        //                                                                                                  ref _compilationReferencesLock,
+        //                                                                                                  GetCompilationReferences);
 
         private IList<MetadataReference> GetCompilationReferences()
         {
             //if (_refs == null)
             //    _refs = AppDomain.CurrentDomain.GetReferences(); //TODO: useful? maybe razor engine references are enough
 
-            var metadataReferenceFeature = _razorProjectEngine.EngineFeatures.SingleOrDefault(x => x is IMetadataReferenceFeature) as IMetadataReferenceFeature;
+            var metadataReferenceFeature = _razorProjectEngine.EngineFeatures.OfType<IMetadataReferenceFeature>().SingleOrDefault();
 
+            //TODO: still needed?
             var references = metadataReferenceFeature.References
                 .Where(x => !x.Display.EndsWith(string.Concat(_options.AssemblyName, ".dll"), StringComparison.InvariantCultureIgnoreCase))
                 .ToList();
