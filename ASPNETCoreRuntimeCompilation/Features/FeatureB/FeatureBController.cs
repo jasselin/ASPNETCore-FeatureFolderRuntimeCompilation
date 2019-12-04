@@ -8,7 +8,7 @@ namespace ASPNETCoreRuntimeCompilation.Features.FeatureB
         {
             var viewModel = new FeatureBViewModel
             {
-                Message = "Feature B message"
+                Message = "Feature B message!"
             };
 
             return View("FeatureB", viewModel);

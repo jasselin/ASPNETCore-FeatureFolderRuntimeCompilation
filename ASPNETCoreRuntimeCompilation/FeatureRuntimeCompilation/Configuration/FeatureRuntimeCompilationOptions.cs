@@ -22,6 +22,6 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration
         public string AssembliesOutputPath => Path.Combine(ProjectPath, "temp", "dynamic_assemblies");
 
         // RazorReferenceManager loads references from a path, not possible at this moment to provide assemblies from memory
-        public bool UseInMemoryAssemblies => false; 
+        public bool UseInMemoryAssemblies => false;  //TODO: revisit
     }
 }
