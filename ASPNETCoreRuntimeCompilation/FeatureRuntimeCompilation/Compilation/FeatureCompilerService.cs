@@ -126,12 +126,13 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation
             //    _refs = AppDomain.CurrentDomain.GetReferences(); //TODO: useful? maybe razor engine references are enough
 
             var metadataReferenceFeature = _razorProjectEngine.EngineFeatures.SingleOrDefault(x => x is IMetadataReferenceFeature) as IMetadataReferenceFeature;
-            //var references = metadataReferenceFeature.References
-            //    .Where(x => !x.Display.EndsWith(string.Concat(_options.AssemblyName, ".dll"), StringComparison.InvariantCultureIgnoreCase))
-            //    .ToList();
 
-            //return references;
-            return metadataReferenceFeature.References.ToList();
+            var references = metadataReferenceFeature.References
+                .Where(x => !x.Display.EndsWith(string.Concat(_options.AssemblyName, ".dll"), StringComparison.InvariantCultureIgnoreCase))
+                .ToList();
+
+            return references;
+            //return metadataReferenceFeature.References.ToList();
             //return metadataReferenceFeature.References.Union(_refs).Distinct().ToList();
         }
 

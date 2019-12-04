@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.AspNetCore.Routing;
-using Microsoft.AspNetCore.Routing.Matching;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System.Linq;
@@ -87,17 +86,6 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc
             var eds = context.RequestServices.GetRequiredService<EndpointDataSource>();
             var endpoints = eds.Endpoints.Where(x => x.DisplayName.Contains(feature.Name, System.StringComparison.InvariantCultureIgnoreCase));
             context.SetEndpoint(endpoints.Last()); // TODO: match current assembly
-        }
-    }
-
-    public class FeatureEndpointSelector : EndpointSelector
-    {
-        public override Task SelectAsync(HttpContext httpContext, CandidateSet candidates)
-        {
-            var candidate = candidates[0]; // doesn't matter, switched later by middleware
-            httpContext.SetEndpoint(candidate.Endpoint);
-            httpContext.Request.RouteValues = candidate.Values;
-            return Task.CompletedTask;
         }
     }
 }

@@ -36,5 +36,22 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation
 
             return new RuntimeFeatureProviderResult(compilerResult.Assembly, newAssembly, controllerType);
         }
+
+        public RuntimeFeatureProviderResult GetFeature(string featurePath)
+        {
+            var metadata = _featureMetadataProvider.GetMetadataFor(featurePath);
+            if (metadata == null)
+                return null;
+
+            var (cacheResult, newAssembly) = _compilerCache.GetOrAdd(metadata.FeatureName, metadata.FeaturePath);
+
+            var compilerResult = cacheResult.Result;
+            if (!compilerResult.Success)
+                throw new FeatureCompilationFailedException(_options.ProjectPath, compilerResult);
+
+            var controllerType = compilerResult.Types.SingleOrDefault(x => x.FullName.Equals(metadata.ControllerTypeName, StringComparison.InvariantCultureIgnoreCase));
+
+            return new RuntimeFeatureProviderResult(compilerResult.Assembly, newAssembly, controllerType);
+        }
     }
 }

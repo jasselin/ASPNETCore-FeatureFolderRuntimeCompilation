@@ -29,5 +29,13 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation
 
             return new FeatureMetadata(featureName, controllerTypeName, featurePath);
         }
+
+        public FeatureMetadata GetMetadataFor(string featurePath)
+        {
+            var featureName = new DirectoryInfo(featurePath).Name;
+            var controllerTypeName = string.Concat(_options.FeatureNamespace, ".", featureName, ".", featureName, "Controller"); // TODO: fix
+
+            return new FeatureMetadata(featureName, controllerTypeName, featurePath);
+        }
     }
 }

@@ -32,12 +32,11 @@ namespace Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation
         {
             get
             {
-                return GetCompilationReferences();
-                //return LazyInitializer.EnsureInitialized(
-                //    ref _compilationReferences,
-                //    ref _compilationReferencesInitialized,
-                //    ref _compilationReferencesLock,
-                //    GetCompilationReferences);
+                return LazyInitializer.EnsureInitialized(
+                    ref _compilationReferences,
+                    ref _compilationReferencesInitialized,
+                    ref _compilationReferencesLock,
+                    GetCompilationReferences);
             }
         }
 
