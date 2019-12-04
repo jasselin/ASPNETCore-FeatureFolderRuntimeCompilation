@@ -42,8 +42,8 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc
             httpContext.SetEndpoint(candidate.Endpoint);
             httpContext.Request.RouteValues = candidate.Values;
 
-            //TODO: static property
-            httpContext.Items["FeatureMetadata"] = _featureMetadataProvider.GetMetadataFor(candidate.Values);
+            var metadata = _featureMetadataProvider.GetMetadataFor(candidate.Values);
+            httpContext.SetFeatureMetadata(metadata);
 
             return Task.CompletedTask;
         }
