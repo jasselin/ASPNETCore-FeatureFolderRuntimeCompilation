@@ -18,7 +18,6 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation
 {
     public class RuntimeFeatureCompilationWatcher
     {
-        private ConcurrentDictionary<string, List<Assembly>> _loadedAssemblies = new ConcurrentDictionary<string, List<Assembly>>();
         private readonly FeatureRuntimeCompilationActionDescriptorChangeProvider _actionDescriptorChangeProvider;
         private readonly ApplicationPartManager _applicationPartManager;
         private readonly IRuntimeFeatureProvider _featureProvider;

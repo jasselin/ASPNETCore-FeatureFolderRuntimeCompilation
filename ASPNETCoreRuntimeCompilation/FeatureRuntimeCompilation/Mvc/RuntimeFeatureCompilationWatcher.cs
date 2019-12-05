@@ -5,14 +5,14 @@ using System.Threading.Tasks;
 
 namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc
 {
-    public class FeatureRuntimeCompilationMiddleware2
+    public class RuntimeFeatureCompilationWatcher
     {
         private readonly RequestDelegate _next;
 
-        private readonly ILogger<FeatureRuntimeCompilationMiddleware2> _logger;
+        private readonly ILogger<RuntimeFeatureCompilationWatcher> _logger;
         private readonly IFeatureCompilerService _compilerService;
 
-        public FeatureRuntimeCompilationMiddleware2(RequestDelegate next, ILogger<FeatureRuntimeCompilationMiddleware2> logger,
+        public RuntimeFeatureCompilationWatcher(RequestDelegate next, ILogger<RuntimeFeatureCompilationWatcher> logger,
             IFeatureCompilerService compilerService)
         {
             _next = next;

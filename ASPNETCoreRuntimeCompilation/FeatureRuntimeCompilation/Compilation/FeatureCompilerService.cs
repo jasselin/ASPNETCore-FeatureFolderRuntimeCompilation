@@ -1,45 +1,34 @@
 ﻿using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration;
 using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
-using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Text;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.Loader;
-using System.Threading;
 
 namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation
 {
-    public class FeatureCompilerService : IFeatureCompilerService
+    internal class FeatureCompilerService : IFeatureCompilerService
     {
-        private IList<MetadataReference> _compilationReferences;
-        private bool _compilationReferencesInitialized;
-        private object _compilationReferencesLock = new object();
-        //private IList<MetadataReference> _refs;
-
-        private readonly RazorProjectEngine _razorProjectEngine; //TODO: get references elsewhere?
+        private readonly RazorReferenceManager _referenceManager;
         private readonly FeatureRuntimeCompilationOptions _options;
 
-        public FeatureCompilerService(RazorProjectEngine razorProjectEngine, FeatureRuntimeCompilationOptions options)
+        public FeatureCompilerService(RazorReferenceManager referenceManager, FeatureRuntimeCompilationOptions options)
         {
-            _razorProjectEngine = razorProjectEngine;
+            _referenceManager = referenceManager;
             _options = options;
         }
 
         private CSharpCompilation GetCompilation(string assemblyName, IEnumerable<SyntaxTree> syntaxTrees)
         {
             var compileOptions = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary);
-                //.WithAssemblyIdentityComparer(DesktopAssemblyIdentityComparer.Default); //TODO: still useful?
-
-            //var references = new List<MetadataReference>(CompilationReferences.Where(x => !(x.Display.Contains("Prextra.") && x.Display.Contains(".Web.dll"))));
 
             return CSharpCompilation.Create(assemblyName, options: compileOptions, syntaxTrees: syntaxTrees, references: GetCompilationReferences());
-            //return Rewrite(compilation);
         }
 
         public FeatureCompilerResult Compile(string assemblyName, string controllerDir)
@@ -106,7 +95,8 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation
 
             var syntaxTrees = csFiles.Select(file =>
             {
-                using (var stream = File.OpenRead(file))
+                // FileShare.ReadWrite to prevent IOException (cannot access file...)
+                using (var stream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 {
                     var text = SourceText.From(stream);
                     return CSharpSyntaxTree.ParseText(text, null, file);
@@ -115,26 +105,17 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation
             return syntaxTrees;
         }
 
-        //private IEnumerable<MetadataReference> CompilationReferences => LazyInitializer.EnsureInitialized(ref _compilationReferences,
-        //                                                                                                  ref _compilationReferencesInitialized,
-        //                                                                                                  ref _compilationReferencesLock,
-        //                                                                                                  GetCompilationReferences);
-
-        private IList<MetadataReference> GetCompilationReferences()
+        private IReadOnlyList<MetadataReference> GetCompilationReferences()
         {
-            //if (_refs == null)
-            //    _refs = AppDomain.CurrentDomain.GetReferences(); //TODO: useful? maybe razor engine references are enough
+            return _referenceManager.CompilationReferences;
+            //var metadataReferenceFeature = _razorProjectEngine.EngineFeatures.OfType<IMetadataReferenceFeature>().SingleOrDefault();
 
-            var metadataReferenceFeature = _razorProjectEngine.EngineFeatures.OfType<IMetadataReferenceFeature>().SingleOrDefault();
+            ////TODO: still needed?
+            ////var references = metadataReferenceFeature.References
+            ////    .Where(x => !x.Display.EndsWith(string.Concat(_options.AssemblyName, ".dll"), StringComparison.InvariantCultureIgnoreCase))
+            ////    .ToList();
 
-            //TODO: still needed?
-            var references = metadataReferenceFeature.References
-                .Where(x => !x.Display.EndsWith(string.Concat(_options.AssemblyName, ".dll"), StringComparison.InvariantCultureIgnoreCase))
-                .ToList();
-
-            return references;
             //return metadataReferenceFeature.References.ToList();
-            //return metadataReferenceFeature.References.Union(_refs).Distinct().ToList();
         }
 
         //TODO: Remove?

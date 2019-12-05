@@ -1,11 +1,8 @@
 ﻿using ASPNETCoreRuntimeCompilation.FeatureFolders;
-using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation;
 using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration;
-using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc;
 using ASPNETCoreRuntimeCompilation.Features.FeatureA;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -27,7 +24,7 @@ namespace ASPNETCoreRuntimeCompilation
         public void ConfigureServices(IServiceCollection services)
         {
             services
-                .AddControllersWithViews() //TODO: check if there is a way to add mvc without controller discovery
+                .AddControllersWithViews()
                 .AddFeatureFolders()
                 .AddFeatureRuntimeCompilation(new FeatureRuntimeCompilationOptions(
                     typeof(Startup).Assembly, // Assembly to be dynamically compiled at runtime
@@ -46,28 +43,16 @@ namespace ASPNETCoreRuntimeCompilation
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
+            // TODO: Move to library, switch to internal classes
             app.UseFeatureRuntimeCompilation();
 
             app.UseRouting();
-
-            //TODO: move to UseEndpoints, group with MapFeatureControllers?
-            //var featureProvider = app.ApplicationServices.GetRequiredService<IRuntimeFeatureProvider>();
-            //var appPartManager = app.ApplicationServices.GetRequiredService<ApplicationPartManager>();
-            //var actionDescriptorChangeProvider = app.ApplicationServices.GetRequiredService<FeatureRuntimeCompilationActionDescriptorChangeProvider>();
-            //app.UseMiddleware<FeatureRuntimeCompilationMiddleware>(featureProvider, appPartManager, actionDescriptorChangeProvider); //TODO: Extension method 
-
             app.UseAuthorization();
-
-            // Removes dynamically compiled assemblies from ApplicationPartManager after ControllerModelConvention are applied.
-            //app.UseFeatureRuntimeCompilation(); // TODO: refactor, merge with previous extension method
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapDefaultControllerRoute(); // Attribute routing
-                //endpoints.MapFeatureControllers();
             });
-
-            //TODO: Handle putting components in another assembly
         }
     }
 }

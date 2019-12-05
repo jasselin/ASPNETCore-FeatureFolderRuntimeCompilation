@@ -4,8 +4,6 @@ using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.ApplicationParts;
-using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation;
 using Microsoft.AspNetCore.Razor.Hosting;
@@ -14,7 +12,6 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration
@@ -25,35 +22,38 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration
         {
             var services = mvcBuilder.Services;
 
-            services.AddSingleton(options);
-
-            // Add controllers to service provider to be resolved by FeatureRuntimeCompilationControllerActivator
-            //RegisterControllers(services, options);
-
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-
             //services.AddSingleton<IFeatureRuntimeCompilationServiceProvider, FeatureRuntimeCompilationServiceProvider>();
 
-            //services.AddSingleton<IControllerActivator, FeatureRuntimeCompilationControllerActivator>();
-
-            services.AddSingleton<RazorReferenceManager, FeatureRazorReferenceManager>();
+            // ASP.NET (Http, Routing, Razor)
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<EndpointSelector, FeatureEndpointSelector>();
-
+            services.AddSingleton<RazorReferenceManager, FeatureRazorReferenceManager>();
             services.AddSingleton<FeatureRuntimeCompilationActionDescriptorChangeProvider>();
             services.AddSingleton<IActionDescriptorChangeProvider>(sp => sp.GetService<FeatureRuntimeCompilationActionDescriptorChangeProvider>());
 
+            mvcBuilder.AddRazorRuntimeCompilation(options);
+
+            // Compilation
+            services.AddSingleton(options);
             services.AddSingleton<RuntimeFeatureCompilationWatcher>();
-
-            services.AddSingleton<IRuntimeFeatureProvider, RuntimeFeatureProvider>();
             services.AddTransient<IFeatureMetadataProvider, FeatureMetadataProvider>();
-            services.AddSingleton<IFeatureCompilerCache, FeatureCompilerCache>();
+            services.AddSingleton<IRuntimeFeatureProvider, RuntimeFeatureProvider>();
             services.AddSingleton<IFeatureCompilerService, FeatureCompilerService>();
+            services.AddSingleton<IFeatureCompilerCache, FeatureCompilerCache>();
 
+            // Setup
             if (Directory.Exists(options.AssembliesOutputPath))
                 Directory.Delete(options.AssembliesOutputPath, true);
 
             Directory.CreateDirectory(options.AssembliesOutputPath);
 
+            FeatureAssemblyLocator.Init();
+
+            return mvcBuilder;
+        }
+
+        private static void AddRazorRuntimeCompilation(this IMvcBuilder mvcBuilder, FeatureRuntimeCompilationOptions options)
+        {
             mvcBuilder.AddRazorRuntimeCompilation(opts =>
             {
                 opts.FileProviders.Clear();
@@ -66,45 +66,17 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration
                 opts.AdditionalReferencePaths.Add(typeof(IHtmlContent).Assembly.Location);
                 opts.AdditionalReferencePaths.Add(typeof(RazorCompiledItem).Assembly.Location);
             });
-
-            FeatureAssemblyLocator.Init();
-
-            return mvcBuilder;
         }
-
-        //private static void RegisterControllers(IServiceCollection services, FeatureRuntimeCompilationOptions options)
-        //{
-        //    foreach (var controllerType in options.Assembly.ExportedTypes.Where(x => typeof(Controller).IsAssignableFrom(x)))
-        //        services.AddTransient(controllerType);
-        //}
 
         public static IApplicationBuilder UseFeatureRuntimeCompilation(this IApplicationBuilder app)
         {
-            var options = app.ApplicationServices.GetRequiredService<FeatureRuntimeCompilationOptions>();
-
-            //RemoveAssemblyFromApplicationPartManager(app, options);
-
             var watcher = app.ApplicationServices.GetRequiredService<RuntimeFeatureCompilationWatcher>();
+            var options = app.ApplicationServices.GetRequiredService<FeatureRuntimeCompilationOptions>();
             Task.Run(() => watcher.Watch(options));
-            //app.UseMiddleware<FeatureRuntimeCompilationMiddleware2>();
+
+            app.UseMiddleware<FeatureRuntimeCompilationMiddleware>();
 
             return app;
-        }
-
-        private static void RemoveAssemblyFromApplicationPartManager(IApplicationBuilder app, FeatureRuntimeCompilationOptions options)
-        {
-            var appPartManager = app.ApplicationServices.GetRequiredService<ApplicationPartManager>();
-
-            var assemblyPart = appPartManager.ApplicationParts
-                .Where(x => x is AssemblyPart)
-                .Cast<AssemblyPart>()
-                .FirstOrDefault(x => x.Assembly == options.Assembly);
-
-            if (assemblyPart == null)
-                throw new Exception($"Assembly '{options.Assembly.FullName}' is not loaded by the application.");
-
-            //TODO: don't include controllerfeature from the start
-            //appPartManager.ApplicationParts.Remove(assemblyPart); // commented to keep route data
         }
     }
 }

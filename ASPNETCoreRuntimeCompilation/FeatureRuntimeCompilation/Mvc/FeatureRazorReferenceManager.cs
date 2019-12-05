@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation;
 using Microsoft.CodeAnalysis;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
 namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc
@@ -16,20 +17,18 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc
     internal class FeatureRazorReferenceManager : RazorReferenceManager
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly IFeatureCompilerCache _compilerCache;
         private readonly FeatureRuntimeCompilationOptions _options;
-
-        public FeatureRazorReferenceManager(ApplicationPartManager partManager, IOptions<MvcRazorRuntimeCompilationOptions> razorOptions,
-            FeatureRuntimeCompilationOptions options, IHttpContextAccessor httpContextAccessor, IFeatureCompilerCache compilerCache)
-            : base(partManager, razorOptions)
-        {
-            _httpContextAccessor = httpContextAccessor;
-            _compilerCache = compilerCache;
-            _options = options;
-        }
 
         private MetadataReference _defaultReference;
         private IList<MetadataReference> _compilationReferences;
+
+        public FeatureRazorReferenceManager(ApplicationPartManager partManager, IOptions<MvcRazorRuntimeCompilationOptions> razorOptions,
+            FeatureRuntimeCompilationOptions options, IHttpContextAccessor httpContextAccessor)
+            : base(partManager, razorOptions)
+        {
+            _httpContextAccessor = httpContextAccessor;
+            _options = options;
+        }
 
         public override IReadOnlyList<MetadataReference> CompilationReferences
         {
@@ -51,11 +50,14 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc
                 if (_httpContextAccessor.HttpContext != null)
                 {
                     var featureMetadata = _httpContextAccessor.HttpContext.GetFeatureMetadata();
+                    var compilerCache = _httpContextAccessor.HttpContext.RequestServices.GetRequiredService<IFeatureCompilerCache>();
 
-                    var (feature, newAssembly) = _compilerCache.Get(featureMetadata.CacheKey);
+                    var (feature, newAssembly) = compilerCache.Get(featureMetadata.CacheKey);
                     var featureAssembly = feature?.Result?.Assembly;
                     if (featureAssembly != null)
                         additionalReferences.Add(CreateMetadataReference(featureAssembly.Location));
+                    else
+                        additionalReferences.Add(_defaultReference);
                 }
 
                 var references = _compilationReferences

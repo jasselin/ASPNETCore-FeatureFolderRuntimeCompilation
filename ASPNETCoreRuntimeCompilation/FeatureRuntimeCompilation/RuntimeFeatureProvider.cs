@@ -1,8 +1,6 @@
 ﻿using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Caching;
 using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation;
 using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Routing;
 using System;
 using System.Linq;
 
@@ -19,24 +17,6 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation
             _options = options;
             _compilerCache = compilerCache;
             _featureMetadataProvider = featureMetadataProvider;
-        }
-
-        public RuntimeFeatureProviderResult GetFeature(HttpContext context)
-        {
-            var routeData = context.GetRouteData();
-            var metadata = _featureMetadataProvider.GetMetadataFor(routeData.Values);
-            if (metadata == null)
-                return null;
-
-            var (cacheResult, newAssembly) = _compilerCache.GetOrAdd(metadata.CacheKey, metadata.FeaturePath);
-
-            var compilerResult = cacheResult.Result;
-            if (!compilerResult.Success)
-                throw new FeatureCompilationFailedException(_options.ProjectPath, compilerResult);
-
-            var controllerType = compilerResult.Types.SingleOrDefault(x => x.FullName.Equals(metadata.ControllerTypeName, StringComparison.InvariantCultureIgnoreCase));
-
-            return new RuntimeFeatureProviderResult(compilerResult.Assembly, newAssembly, controllerType);
         }
 
         public RuntimeFeatureProviderResult GetFeature(string featurePath)
