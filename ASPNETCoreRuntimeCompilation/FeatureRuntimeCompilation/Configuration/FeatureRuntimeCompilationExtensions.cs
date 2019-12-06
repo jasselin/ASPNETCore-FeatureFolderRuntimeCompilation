@@ -28,19 +28,19 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<EndpointSelector, FeatureEndpointSelector>();
             services.AddSingleton<RazorReferenceManager, FeatureRazorReferenceManager>();
-            services.AddSingleton<FeatureRuntimeCompilationActionDescriptorChangeProvider>();
-            services.AddSingleton<IActionDescriptorChangeProvider>(sp => sp.GetService<FeatureRuntimeCompilationActionDescriptorChangeProvider>());
+            services.AddSingleton<FeatureActionDescriptorChangeProvider>();
+            services.AddSingleton<IActionDescriptorChangeProvider>(sp => sp.GetService<FeatureActionDescriptorChangeProvider>());
 
             mvcBuilder.AddRazorRuntimeCompilation(options);
 
             // Compilation
             services.AddSingleton(options);
-            services.AddSingleton<RuntimeFeatureCompilationWatcher>();
+            services.AddSingleton<FeatureRuntimeCompilationWatcher>();
             services.AddTransient<IFeatureMetadataProvider, FeatureMetadataProvider>();
             services.AddSingleton<IFeatureUpdater, FeatureUpdater>();
             services.AddSingleton<IFeatureApplicationPartManager, FeatureApplicationPartManager>();
             services.AddSingleton<IFeatureCache, FeatureCache>();
-            services.AddSingleton<IFeatureCompilerService, FeatureCompilerService>();
+            services.AddSingleton<IFeatureCompiler, FeatureCompiler>();
 
             // Setup
             if (Directory.Exists(options.AssembliesOutputPath))
@@ -58,7 +58,7 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration
             mvcBuilder.AddRazorRuntimeCompilation(opts =>
             {
                 opts.FileProviders.Clear();
-                opts.FileProviders.Add(new FeatureRuntimeCompilationPhysicalFileProvider(options.ProjectPath));
+                opts.FileProviders.Add(new FeaturePhysicalFileProvider(options.ProjectPath));
 
                 // References are missing because we remove the main assembly application part
                 foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies().Where(x => x != options.Assembly))
@@ -71,7 +71,7 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration
 
         public static IApplicationBuilder UseFeatureRuntimeCompilation(this IApplicationBuilder app)
         {
-            var watcher = app.ApplicationServices.GetRequiredService<RuntimeFeatureCompilationWatcher>();
+            var watcher = app.ApplicationServices.GetRequiredService<FeatureRuntimeCompilationWatcher>();
             var options = app.ApplicationServices.GetRequiredService<FeatureRuntimeCompilationOptions>();
             Task.Run(() => watcher.Watch(options));
 

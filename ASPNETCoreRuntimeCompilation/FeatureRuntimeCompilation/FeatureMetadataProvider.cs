@@ -32,7 +32,7 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation
         {
             var controllerName = new DirectoryInfo(featurePath).Name;
             var featureName = string.Concat(_options.FeatureNamespace, featurePath.Substring(_options.FeaturesPath.Length).Replace("\\", "."));
-            var controllerTypeName = string.Concat(featureName, ".", controllerName, "Controller"); // TODO: fix
+            var controllerTypeName = string.Concat(featureName, ".", controllerName, "Controller");
 
             return new FeatureMetadata(featureName, controllerTypeName, featurePath);
         }

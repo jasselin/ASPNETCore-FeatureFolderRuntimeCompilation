@@ -18,7 +18,7 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation
         private static string FormatMessage(string rootPath, IEnumerable<DiagnosticMessage> failures)
         {
             return "Compilation failed: " + Environment.NewLine +
-                   string.Join(Environment.NewLine + Environment.NewLine, failures.Select(x => x.FormattedMessage.Replace(rootPath + @"\../", @"\")));
+                   string.Join(Environment.NewLine + Environment.NewLine, failures.Select(x => x.FormattedMessage.Replace(rootPath, string.Empty)));
         }
     }
 }

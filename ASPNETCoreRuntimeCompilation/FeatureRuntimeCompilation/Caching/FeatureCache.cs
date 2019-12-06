@@ -6,11 +6,11 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Caching
 {
     public class FeatureCache : IFeatureCache
     {
-        private readonly IFeatureCompilerService _compiler;
+        private readonly IFeatureCompiler _compiler;
 
         private readonly ConcurrentDictionary<string, FeatureCompilerResult> _cachedResults = new ConcurrentDictionary<string, FeatureCompilerResult>();
 
-        public FeatureCache(IFeatureCompilerService compiler)
+        public FeatureCache(IFeatureCompiler compiler)
         {
             _compiler = compiler;
         }

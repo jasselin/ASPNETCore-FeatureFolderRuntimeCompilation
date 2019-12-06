@@ -4,20 +4,20 @@ using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.Extensions.Logging;
 
-namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation
+namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc
 {
     public class FeatureApplicationPartManager : IFeatureApplicationPartManager
     {
         private readonly ApplicationPartManager _appPartManager;
         private readonly ILogger<FeatureApplicationPartManager> _logger;
 
-        public FeatureApplicationPartManager(ApplicationPartManager appPartManager, 
+        public FeatureApplicationPartManager(ApplicationPartManager appPartManager,
             ILogger<FeatureApplicationPartManager> logger)
         {
             _appPartManager = appPartManager;
             _logger = logger;
         }
-        
+
         public void Add(Assembly featureAssembly)
         {
             _logger.LogInformation($"Adding assembly '{featureAssembly.FullName} to ApplicationPartManager.'");

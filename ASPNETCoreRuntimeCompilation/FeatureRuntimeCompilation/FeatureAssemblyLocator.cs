@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation
 {
-    //TODO: still used?
+    // Help resolve dynamically created assemblies
     public static class FeatureAssemblyLocator
     {
         private static Dictionary<string, Assembly> _assemblies;

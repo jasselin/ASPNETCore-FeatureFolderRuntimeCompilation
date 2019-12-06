@@ -3,7 +3,6 @@ using System.Reflection;
 
 namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration
 {
-    // TODO: Fix naming, FeatureRuntime vs RuntimeFeature
     public class FeatureRuntimeCompilationOptions
     {
         public FeatureRuntimeCompilationOptions(Assembly assembly, string projectPath)
@@ -13,7 +12,6 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration
             AssemblyName = assembly.GetName().Name;
         }
 
-        //TODO: Make this a list
         public Assembly Assembly { get; set; }
         public string AssemblyName { get; set; }
         public string FeatureNamespace => string.Concat(AssemblyName, ".Features");
@@ -22,6 +20,6 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration
         public string AssembliesOutputPath => Path.Combine(ProjectPath, "temp", "dynamic_assemblies");
 
         // RazorReferenceManager loads references from a path, not possible at this moment to provide assemblies from memory
-        public bool UseInMemoryAssemblies => false;  //TODO: revisit
+        public bool UseInMemoryAssemblies => false;
     }
 }

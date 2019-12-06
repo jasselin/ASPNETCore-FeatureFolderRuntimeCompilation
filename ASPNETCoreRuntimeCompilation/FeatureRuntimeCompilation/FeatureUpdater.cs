@@ -14,7 +14,7 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation
     {
         private readonly IFeatureCache _featureCache;
         private readonly IFeatureApplicationPartManager _featureAppPartManager;
-        private readonly FeatureRuntimeCompilationActionDescriptorChangeProvider _actionDescriptorChangeProvider;
+        private readonly FeatureActionDescriptorChangeProvider _actionDescriptorChangeProvider;
         private readonly ILogger<FeatureUpdater> _logger;
 
         private readonly List<FeatureMetadata> _pendingUpdates = new List<FeatureMetadata>();
@@ -25,7 +25,7 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation
 
         public FeatureUpdater(IFeatureCache featureCache,
             IFeatureApplicationPartManager featureAppPartManager,
-            FeatureRuntimeCompilationActionDescriptorChangeProvider actionDescriptorChangeProvider,
+            FeatureActionDescriptorChangeProvider actionDescriptorChangeProvider,
             ILogger<FeatureUpdater> logger)
         {
             _featureCache = featureCache;
@@ -33,7 +33,7 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation
             _actionDescriptorChangeProvider = actionDescriptorChangeProvider;
             _logger = logger;
 
-            _throttlingTimer = new Timer(200) //TODO: lower
+            _throttlingTimer = new Timer(200)
             {
                 AutoReset = false // fire once
             };

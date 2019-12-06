@@ -13,12 +13,12 @@ using System.Runtime.Loader;
 
 namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation
 {
-    internal class FeatureCompilerService : IFeatureCompilerService
+    internal class FeatureCompiler : IFeatureCompiler
     {
         private readonly RazorReferenceManager _referenceManager;
         private readonly FeatureRuntimeCompilationOptions _options;
 
-        public FeatureCompilerService(RazorReferenceManager referenceManager, FeatureRuntimeCompilationOptions options)
+        public FeatureCompiler(RazorReferenceManager referenceManager, FeatureRuntimeCompilationOptions options)
         {
             _referenceManager = referenceManager;
             _options = options;

@@ -1,6 +1,6 @@
 ﻿namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation
 {
-    public interface IFeatureCompilerService
+    public interface IFeatureCompiler
     {
         FeatureCompilerResult Compile(string cacheKey, string featurePath);
     }

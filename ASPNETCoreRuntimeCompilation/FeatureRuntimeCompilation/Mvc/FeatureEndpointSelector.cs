@@ -1,5 +1,6 @@
 ﻿using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Caching;
 using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation;
+using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing.Matching;
 using Microsoft.Extensions.Logging;
@@ -9,13 +10,16 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc
 {
     public class FeatureEndpointSelector : EndpointSelector
     {
+        private readonly FeatureRuntimeCompilationOptions _options;
         private readonly IFeatureMetadataProvider _metadataProvider;
         private readonly IFeatureCache _featureCache;
         private readonly ILogger<FeatureEndpointSelector> _logger;
 
-        public FeatureEndpointSelector(IFeatureMetadataProvider metadataProvider, IFeatureCache featureCache,
+        public FeatureEndpointSelector(FeatureRuntimeCompilationOptions options,
+            IFeatureMetadataProvider metadataProvider, IFeatureCache featureCache,
             ILogger<FeatureEndpointSelector> logger)
         {
+            _options = options;
             _metadataProvider = metadataProvider;
             _featureCache = featureCache;
             _logger = logger;
@@ -34,7 +38,7 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc
             if (result != null)
             {
                 if (!result.Success)
-                    throw new FeatureCompilationFailedException("", result); //TODO: fix ""
+                    throw new FeatureCompilationFailedException(_options.ProjectPath, result);
 
                 for(var i = candidates.Count - 1; i > 0; i--)
                 {

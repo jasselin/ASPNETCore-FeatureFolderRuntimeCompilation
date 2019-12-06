@@ -5,11 +5,11 @@ using Microsoft.Extensions.Primitives;
 
 namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc
 {
-    public class FeatureRuntimeCompilationPhysicalFileProvider : IFileProvider
+    public class FeaturePhysicalFileProvider : IFileProvider
     {
         private PhysicalFileProvider _innerProvider;
 
-        public FeatureRuntimeCompilationPhysicalFileProvider(string path)
+        public FeaturePhysicalFileProvider(string path)
         {
             _innerProvider = new PhysicalFileProvider(path);
         }

@@ -4,14 +4,14 @@ using Microsoft.Extensions.Logging;
 
 namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation
 {
-    public class RuntimeFeatureCompilationWatcher
+    public class FeatureRuntimeCompilationWatcher
     {
         private readonly IFeatureMetadataProvider _metadataProvider;
         private readonly IFeatureUpdater _featureUpdater;
-        private readonly ILogger<RuntimeFeatureCompilationWatcher> _logger;
+        private readonly ILogger<FeatureRuntimeCompilationWatcher> _logger;
 
-        public RuntimeFeatureCompilationWatcher(IFeatureMetadataProvider metadataProvider,
-                IFeatureUpdater featureUpdater, ILogger<RuntimeFeatureCompilationWatcher> logger)
+        public FeatureRuntimeCompilationWatcher(IFeatureMetadataProvider metadataProvider,
+                IFeatureUpdater featureUpdater, ILogger<FeatureRuntimeCompilationWatcher> logger)
         {
             _metadataProvider = metadataProvider;
             _featureUpdater = featureUpdater;
