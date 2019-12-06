@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
@@ -16,13 +17,13 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation
         private readonly FeatureRuntimeCompilationActionDescriptorChangeProvider _actionDescriptorChangeProvider;
         private readonly ILogger<FeatureUpdater> _logger;
 
-        private readonly List<FeatureUpdaterTask> _pendingUpdates = new List<FeatureUpdaterTask>();
+        private readonly List<FeatureMetadata> _pendingUpdates = new List<FeatureMetadata>();
 
         private readonly object _pendingUpdatesLock = new object();
         private readonly Timer _throttlingTimer;
         private bool _updatePending;
 
-        public FeatureUpdater(IFeatureCompilerService compilerService, 
+        public FeatureUpdater(IFeatureCompilerService compilerService,
             IFeatureApplicationPartManager featureAppPartManager,
             FeatureRuntimeCompilationActionDescriptorChangeProvider actionDescriptorChangeProvider,
             ILogger<FeatureUpdater> logger)
@@ -58,12 +59,11 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation
 
                 // Pending task for the same feature is removed and added to the end of the list
                 // Tasks that are not pending started compiling, so we add another task to the end of the list to update the feature again.
-                var existingItem = _pendingUpdates.SingleOrDefault(x => x.Name.Equals(feature.Name) && x.Pending);
+                var existingItem = _pendingUpdates.SingleOrDefault(x => x.Name.Equals(feature.Name));
                 if (existingItem != null)
                     _pendingUpdates.Remove(existingItem);
 
-                var task = new FeatureUpdaterTask(feature);
-                _pendingUpdates.Add(task);
+                _pendingUpdates.Add(feature);
             }
         }
 
@@ -77,13 +77,13 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation
         {
             _updatePending = true;
 
-            _logger.LogInformation("ProcessUpdates fired.");
+            _logger.LogDebug("ProcessUpdates fired.");
 
             // Not optimal, but at least tasks are batched. Might optimize with continuous updates later.
             while (_pendingUpdates.Any())
                 ProcessUpdates();
 
-            _logger.LogInformation("ProcessUpdates done!");
+            _logger.LogDebug("ProcessUpdates done.");
 
             _updatePending = false;
         }
@@ -101,23 +101,32 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation
             Task.WaitAll(tasks);
         }
 
-        private void UpdateFeature(FeatureUpdaterTask task)
+        private void UpdateFeature(FeatureMetadata feature)
         {
             lock (_pendingUpdatesLock)
             {
-                _pendingUpdates.Remove(task);
+                _pendingUpdates.Remove(feature);
             }
 
-            var feature = task.Feature;
-            _logger.LogInformation($"Updating feature '{task.Name}'.");
+            _logger.LogInformation($"Updating feature '{feature.Name}'.");
 
+            var sw = Stopwatch.StartNew();
             var result = _compilerService.Compile(feature.Name, feature.FeaturePath);
+            if (!result.Success)
+            {
+                //TODO: need error in the browser
+                _logger.LogInformation("Compilation failed, skipping feature update.");
+                return;
+            }
+            sw.Stop();
+            _logger.LogInformation($"Feature '{feature.Name}' compiled in {sw.ElapsedMilliseconds}ms.");
 
             _featureAppPartManager.Remove(feature);
             _featureAppPartManager.Add(result.Assembly);
 
-            _logger.LogInformation("Triggering ActionDescriptonChangerProvider refresh.");
             _actionDescriptorChangeProvider.TokenSource.Cancel();
+
+            _logger.LogInformation($"Feature '{feature.Name}' updated.");
         }
 
         public bool UpdatePending()

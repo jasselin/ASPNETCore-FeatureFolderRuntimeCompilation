@@ -105,23 +105,6 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation
             return syntaxTrees;
         }
 
-        //TODO: Remove?
-        //private static CSharpCompilation Rewrite(CSharpCompilation compilation)
-        //{
-        //    //var rewrittenTrees = new List<SyntaxTree>();
-        //    //foreach (var tree in compilation.SyntaxTrees)
-        //    //{
-        //    //    var semanticModel = compilation.GetSemanticModel(tree, true);
-        //    //    var rewriter = new ExpressionRewriter(semanticModel);
-
-        //    //    var rewrittenTree = tree.WithRootAndOptions(rewriter.Visit(tree.GetRoot()), tree.Options);
-        //    //    rewrittenTrees.Add(rewrittenTree);
-        //    //}
-
-        //    //return compilation.RemoveAllSyntaxTrees().AddSyntaxTrees(rewrittenTrees);
-        //    return compilation;
-        //}
-
         private FeatureCompilerResult GetCompilationFailedResult(IEnumerable<Diagnostic> diagnostics)
         {
             var failures = diagnostics
