@@ -2,12 +2,13 @@
 {
     public class FeatureUpdaterTask
     {
-        public FeatureUpdaterTask(string name)
+        public FeatureUpdaterTask(FeatureMetadata metadata)
         {
-            Name = name;
+            Feature = metadata;
             Pending = true;
         }
-        public string Name { get; }
+        public string Name => Feature.Name;
+        public FeatureMetadata Feature { get; }
         public bool Pending { get; set; }
     }
 }

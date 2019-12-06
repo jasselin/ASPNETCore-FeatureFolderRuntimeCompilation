@@ -38,7 +38,7 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration
             services.AddSingleton<RuntimeFeatureCompilationWatcher>();
             services.AddTransient<IFeatureMetadataProvider, FeatureMetadataProvider>();
             services.AddSingleton<IFeatureUpdater, FeatureUpdater>();
-            services.AddSingleton<IRuntimeFeatureProvider, RuntimeFeatureProvider>();
+            services.AddSingleton<IFeatureApplicationPartManager, FeatureApplicationPartManager>();
             services.AddSingleton<IFeatureCompilerService, FeatureCompilerService>();
             services.AddSingleton<IFeatureCompilerCache, FeatureCompilerCache>();
 

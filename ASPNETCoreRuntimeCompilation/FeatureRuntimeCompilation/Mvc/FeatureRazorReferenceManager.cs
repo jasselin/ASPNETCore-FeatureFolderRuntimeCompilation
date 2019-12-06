@@ -52,7 +52,7 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc
                     var featureMetadata = _httpContextAccessor.HttpContext.GetFeatureMetadata();
                     var compilerCache = _httpContextAccessor.HttpContext.RequestServices.GetRequiredService<IFeatureCompilerCache>();
 
-                    var (feature, newAssembly) = compilerCache.Get(featureMetadata.CacheKey);
+                    var (feature, newAssembly) = compilerCache.Get(featureMetadata.Name);
                     var featureAssembly = feature?.Result?.Assembly;
                     if (featureAssembly != null)
                         additionalReferences.Add(CreateMetadataReference(featureAssembly.Location));

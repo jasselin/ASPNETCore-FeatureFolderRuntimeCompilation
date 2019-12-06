@@ -1,5 +1,4 @@
-﻿using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 
@@ -10,30 +9,40 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc
         private readonly RequestDelegate _next;
 
         private readonly ILogger<FeatureRuntimeCompilationMiddleware> _logger;
-        private readonly IFeatureCompilerService _compilerService;
+        private readonly IFeatureUpdater _featureUpdater;
 
-        public FeatureRuntimeCompilationMiddleware(RequestDelegate next, ILogger<FeatureRuntimeCompilationMiddleware> logger,
-            IFeatureCompilerService compilerService)
+        public FeatureRuntimeCompilationMiddleware(RequestDelegate next, IFeatureUpdater featureUpdater,
+            ILogger<FeatureRuntimeCompilationMiddleware> logger)
         {
             _next = next;
             _logger = logger;
-            _compilerService = compilerService;
+            _featureUpdater = featureUpdater;
         }
 
         public async Task InvokeAsync(HttpContext context)
         {
-            //_logger.LogInformation("Waiting for pending compilation...");
+            // Nothing to wait for, moving on.
+            if (!_featureUpdater.UpdatePending())
+            {
+                await _next(context);
+                return;
+            }
 
-            //var timeout = 10000;
-            //var retryEvery = timeout / 20;
-            //var i = 0;
-            //while (_compilerService.CompilationPending() && i < timeout / 20)
-            //{
-            //    System.Threading.Thread.Sleep(retryEvery);
-            //    i++;
-            //}
+            _logger.LogInformation("Waiting for pending updates...");
 
-            //_logger.LogInformation("Compilation complete.");
+            var timeout = 10000;
+            var retryEvery = timeout / 20;
+            var i = 0;
+            while (_featureUpdater.UpdatePending() && i < timeout / 20)
+            {
+                System.Threading.Thread.Sleep(retryEvery);
+                i++;
+            }
+
+            if (_featureUpdater.UpdatePending())
+                _logger.LogWarning("Timeout limit exceeded.");
+            else
+                _logger.LogInformation("All updates completed.");
 
             await _next(context);
         }

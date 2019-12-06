@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
+using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation;
+using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc;
 using Microsoft.Extensions.Logging;
 using Timer = System.Timers.Timer;
 
@@ -11,6 +11,9 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation
 {
     public class FeatureUpdater : IFeatureUpdater
     {
+        private readonly IFeatureCompilerService _compilerService;
+        private readonly IFeatureApplicationPartManager _featureAppPartManager;
+        private readonly FeatureRuntimeCompilationActionDescriptorChangeProvider _actionDescriptorChangeProvider;
         private readonly ILogger<FeatureUpdater> _logger;
 
         private readonly List<FeatureUpdaterTask> _pendingUpdates = new List<FeatureUpdaterTask>();
@@ -19,20 +22,26 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation
         private readonly Timer _throttlingTimer;
         private bool _updatePending;
 
-        public FeatureUpdater(ILogger<FeatureUpdater> logger)
+        public FeatureUpdater(IFeatureCompilerService compilerService, 
+            IFeatureApplicationPartManager featureAppPartManager,
+            FeatureRuntimeCompilationActionDescriptorChangeProvider actionDescriptorChangeProvider,
+            ILogger<FeatureUpdater> logger)
         {
+            _compilerService = compilerService;
+            _featureAppPartManager = featureAppPartManager;
+            _actionDescriptorChangeProvider = actionDescriptorChangeProvider;
             _logger = logger;
 
-            _throttlingTimer = new Timer(2000)
+            _throttlingTimer = new Timer(2000) //TODO: lower
             {
                 AutoReset = false // fire once
             };
             _throttlingTimer.Elapsed += StartProcessingUpdates;
         }
 
-        public void Update(FeatureMetadata metadata)
+        public void Update(FeatureMetadata feature)
         {
-            AddOrUpdateTask(metadata);
+            AddOrUpdateTask(feature);
 
             if (!_updatePending)
                 StartThrottlingTimer();
@@ -40,20 +49,20 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation
                 _logger.LogInformation("Update in progress, skipping timer start.");
         }
 
-        private void AddOrUpdateTask(FeatureMetadata metadata)
+        private void AddOrUpdateTask(FeatureMetadata feature)
         {
             // Ensure thread safety while updating tasks to avoid duplication
             lock (_pendingUpdatesLock)
             {
-                _logger.LogInformation($"Adding a task to update feature '{metadata.CacheKey}'.");
+                _logger.LogInformation($"Adding a task to update feature '{feature.Name}'.");
 
                 // Pending task for the same feature is removed and added to the end of the list
                 // Tasks that are not pending started compiling, so we add another task to the end of the list to update the feature again.
-                var existingItem = _pendingUpdates.SingleOrDefault(x => x.Name.Equals(metadata.CacheKey) && x.Pending);
+                var existingItem = _pendingUpdates.SingleOrDefault(x => x.Name.Equals(feature.Name) && x.Pending);
                 if (existingItem != null)
                     _pendingUpdates.Remove(existingItem);
 
-                var task = new FeatureUpdaterTask(metadata.CacheKey);
+                var task = new FeatureUpdaterTask(feature);
                 _pendingUpdates.Add(task);
             }
         }
@@ -72,9 +81,7 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation
 
             // Not optimal, but at least tasks are batched. Might optimize with continuous updates later.
             while (_pendingUpdates.Any())
-            {
                 ProcessUpdates();
-            }
 
             _logger.LogInformation("ProcessUpdates done!");
 
@@ -101,13 +108,21 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation
                 _pendingUpdates.Remove(task);
             }
 
+            var feature = task.Feature;
             _logger.LogInformation($"Updating feature '{task.Name}'.");
-            Thread.Sleep(2000);
+
+            var result = _compilerService.Compile(feature.Name, feature.FeaturePath);
+
+            _featureAppPartManager.Remove(feature);
+            _featureAppPartManager.Add(result.Assembly);
+
+            _logger.LogInformation("Triggering ActionDescriptonChangerProvider refresh.");
+            _actionDescriptorChangeProvider.TokenSource.Cancel();
         }
 
         public bool UpdatePending()
         {
-            return _updatePending;
+            return _pendingUpdates.Any();
         }
     }
 }

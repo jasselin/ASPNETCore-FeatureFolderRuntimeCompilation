@@ -31,7 +31,7 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation
             return CSharpCompilation.Create(assemblyName, options: compileOptions, syntaxTrees: syntaxTrees, references: _referenceManager.CompilationReferences);
         }
 
-        public FeatureCompilerResult Compile(string assemblyName, string controllerDir)
+        public FeatureCompilerResult Compile(string assemblyName, string featurePath)
         {
             Stream CreateStream(string filePath)
             {
@@ -53,7 +53,7 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation
             using var assemblyStream = CreateStream(assemblyFilePath);
             using var pdbStream = CreateStream(pdbFilePath);
 
-            var syntaxTrees = GetSyntaxTrees(controllerDir);
+            var syntaxTrees = GetSyntaxTrees(featurePath);
             var result = GetCompilation(tempAssemblyName, syntaxTrees)
                 .Emit(assemblyStream, pdbStream, options: new EmitOptions(debugInformationFormat: DebugInformationFormat.Pdb));
 

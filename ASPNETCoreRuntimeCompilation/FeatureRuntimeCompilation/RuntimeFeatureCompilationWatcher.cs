@@ -1,37 +1,26 @@
 ﻿using System.IO;
-using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation;
 using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration;
-using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc;
-using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.Extensions.Logging;
 
 namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation
 {
     public class RuntimeFeatureCompilationWatcher
     {
-        private readonly FeatureRuntimeCompilationActionDescriptorChangeProvider _actionDescriptorChangeProvider;
-        private readonly ApplicationPartManager _applicationPartManager;
         private readonly IFeatureMetadataProvider _metadataProvider;
         private readonly IFeatureUpdater _featureUpdater;
         private readonly ILogger<RuntimeFeatureCompilationWatcher> _logger;
 
-        public RuntimeFeatureCompilationWatcher(FeatureRuntimeCompilationActionDescriptorChangeProvider actionDescriptorChangeProvider,
-                ApplicationPartManager applicationPartManager, ILoggerFactory loggerFactory, IFeatureMetadataProvider metadataProvider,
-                IFeatureUpdater featureUpdater)
+        public RuntimeFeatureCompilationWatcher(IFeatureMetadataProvider metadataProvider,
+                IFeatureUpdater featureUpdater, ILogger<RuntimeFeatureCompilationWatcher> logger)
         {
-            _actionDescriptorChangeProvider = actionDescriptorChangeProvider;
-            _applicationPartManager = applicationPartManager;
             _metadataProvider = metadataProvider;
             _featureUpdater = featureUpdater;
-            _logger = loggerFactory.CreateLogger<RuntimeFeatureCompilationWatcher>();
+            _logger = logger;
         }
 
         public void Watch(FeatureRuntimeCompilationOptions options)
         {
             var configFolderPath = Path.Combine(Directory.GetCurrentDirectory(), options.FeaturesPath);
-
-            if (!Directory.Exists(configFolderPath))
-                Directory.CreateDirectory(configFolderPath);
 
             var watcher = new FileSystemWatcher()
             {
@@ -49,29 +38,6 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation
                 var metadata = _metadataProvider.GetMetadataFor(featurePath);
 
                 _featureUpdater.Update(metadata);
-
-                //var featureDirectory = Path.GetDirectoryName(e.FullPath);
-                //var feature = _featureProvider.GetFeature(featureDirectory);
-
-                //var featureAssemblyRegex = new Regex(@$"{feature.Name}.\w+-\w+\-\w+\-\w+\-\w+");
-
-                //var parts = _applicationPartManager.ApplicationParts
-                //    .OfType<AssemblyPart>()
-                //    .Where(x => featureAssemblyRegex.IsMatch(x.Name))
-                //    .ToArray();
-
-                //foreach (var part in parts)
-                //{
-                //    _logger.LogInformation($"Removing assembly '{part.Assembly.FullName}' from ApplicationPartManager.");
-                //    _applicationPartManager.ApplicationParts.Remove(part);
-                //}
-
-                //_logger.LogInformation($"Adding assembly '{feature.Assembly.FullName} to ApplicationPartManager.'");
-                //var assemblyPart = new AssemblyPart(feature.Assembly);
-                //_applicationPartManager.ApplicationParts.Add(assemblyPart);
-
-                //_logger.LogInformation("Triggering ActionDescriptonChangerProvider refresh.");
-                //_actionDescriptorChangeProvider.TokenSource.Cancel();
             }
 
             watcher.Created += changeEvent; // Create file
