@@ -41,6 +41,7 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration
             services.AddSingleton<IFeatureApplicationPartManager, FeatureApplicationPartManager>();
             services.AddSingleton<IFeatureCache, FeatureCache>();
             services.AddSingleton<IFeatureCompiler, FeatureCompiler>();
+            services.AddTransient<IFeatureChecksumGenerator, FeatureChecksumGenerator>();
 
             // Setup
             if (Directory.Exists(options.AssembliesOutputPath))

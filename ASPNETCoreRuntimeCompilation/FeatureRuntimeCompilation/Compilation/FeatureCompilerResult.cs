@@ -13,9 +13,10 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation
             Failures = failures;
         }
 
-        public FeatureCompilerResult(AssemblyLoadContext assemblyLoadContext)
+        public FeatureCompilerResult(AssemblyLoadContext assemblyLoadContext, string checksum)
         {
             AssemblyLoadContext = assemblyLoadContext;
+            Checksum = checksum;
             Failures = new List<DiagnosticMessage>();
         }
 
@@ -24,5 +25,6 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation
         public IEnumerable<TypeInfo> Types => Assembly.DefinedTypes.Select(x => x.GetTypeInfo());
         public IEnumerable<DiagnosticMessage> Failures { get; }
         public bool Success => !Failures.Any();
+        public string Checksum { get; }
     }
 }

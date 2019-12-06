@@ -31,7 +31,7 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation
             return CSharpCompilation.Create(assemblyName, options: compileOptions, syntaxTrees: syntaxTrees, references: _referenceManager.CompilationReferences);
         }
 
-        public FeatureCompilerResult Compile(string assemblyName, string featurePath)
+        public FeatureCompilerResult Compile(string assemblyName, string featurePath, string checksum)
         {
             Stream CreateStream(string filePath)
             {
@@ -62,7 +62,7 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation
 
             var assemblyLoadContext = CreateAssemblyLoadContext(tempAssemblyName, assemblyFilePath, assemblyStream, pdbStream);
 
-            return new FeatureCompilerResult(assemblyLoadContext);
+            return new FeatureCompilerResult(assemblyLoadContext, checksum);
         }
 
         private AssemblyLoadContext CreateAssemblyLoadContext(string contextName, string assemblyFilePath, Stream assemblyStream, Stream pdbStream)

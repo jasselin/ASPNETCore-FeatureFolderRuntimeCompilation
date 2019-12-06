@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
@@ -110,15 +109,19 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation
 
             _logger.LogInformation($"Updating feature '{feature.Name}'.");
 
-            var sw = Stopwatch.StartNew();
-            var result = _featureCache.GetOrUpdate(feature);
+            var (result, hasUpdated) = _featureCache.GetOrUpdate(feature);
+
+            if (!hasUpdated)
+            {
+                _logger.LogInformation("Feature is already up to date.");
+                return;
+            }
+
             if (!result.Success)
             {
                 _logger.LogInformation("Compilation failed, skipping feature update.");
                 return;
             }
-            sw.Stop();
-            _logger.LogInformation($"Feature '{feature.Name}' compiled in {sw.ElapsedMilliseconds}ms.");
 
             _featureAppPartManager.Remove(feature);
             _featureAppPartManager.Add(result.Assembly);

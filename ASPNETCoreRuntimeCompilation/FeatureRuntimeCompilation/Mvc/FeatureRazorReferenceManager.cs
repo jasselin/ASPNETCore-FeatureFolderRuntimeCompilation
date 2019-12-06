@@ -67,21 +67,6 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc
                         _logger.LogWarning($"Razor ref assembly: {featureAssembly.FullName}");
                         additionalReferences.Add(CreateMetadataReference(featureAssembly.Location));
                     }
-
-                    //var featureCache = _httpContextAccessor.HttpContext.RequestServices.GetRequiredService<IFeatureCache>();
-
-                    //var metadata = _metadataProvider.GetMetadataFor(_httpContextAccessor.HttpContext.Request.RouteValues);
-                    //var featureAssembly = featureCache.Get(metadata)?.Assembly;
-                    //if (featureAssembly == null)
-                    //{
-                    //    _logger.LogWarning($"Razor ref assembly: DEFAULT");
-                    //    additionalReferences.Add(_defaultReference);
-                    //}
-                    //else
-                    //{
-                    //    _logger.LogWarning($"Razor ref assembly: {featureAssembly.FullName}");
-                    //    additionalReferences.Add(CreateMetadataReference(featureAssembly.Location));
-                    //}
                 }
 
                 var references = _compilationReferences
