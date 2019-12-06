@@ -10,13 +10,6 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc
 {
     public class FeatureEndpointSelector : EndpointSelector
     {
-        private readonly IFeatureMetadataProvider _featureMetadataProvider;
-
-        public FeatureEndpointSelector(IFeatureMetadataProvider featureMetadataProvider)
-        {
-            _featureMetadataProvider = featureMetadataProvider;
-        }
-
         public override Task SelectAsync(HttpContext httpContext, CandidateSet candidates)
         {
             if (candidates.Count == 0)
@@ -31,7 +24,7 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc
                 for (var i = 1; i < candidates.Count; i++)
                 {
                     var creationTime = GetCandidateCreationTime(candidates[i]);
-                    if (creationTime >= candidateCreationTime)
+                    if (creationTime != null && (creationTime >= candidateCreationTime || candidateCreationTime == null))
                     {
                         candidate = candidates[i];
                         candidateCreationTime = creationTime;
@@ -42,20 +35,16 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc
             httpContext.SetEndpoint(candidate.Endpoint);
             httpContext.Request.RouteValues = candidate.Values;
 
-            var metadata = _featureMetadataProvider.GetMetadataFor(candidate.Values);
-            httpContext.SetFeatureMetadata(metadata);
-
             return Task.CompletedTask;
         }
 
-        private DateTime GetCandidateCreationTime(CandidateState candidate)
+        private DateTime? GetCandidateCreationTime(CandidateState candidate)
         {
-            return candidate.Endpoint.Metadata
-                .OfType<ControllerActionDescriptor>()
-                .Select(x => x.ControllerTypeInfo.Assembly)
-                .Where(x => !string.IsNullOrEmpty(x.Location))
-                .Select(x => File.GetLastWriteTime(x.Location))
-                .Single();
+            var assembly = candidate.Endpoint.GetEndpointAssembly();
+            if (string.IsNullOrEmpty(assembly.Location))
+                return null;
+
+            return File.GetLastWriteTime(assembly.Location);
         }
     }
 }

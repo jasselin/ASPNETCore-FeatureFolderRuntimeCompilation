@@ -3,13 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection.PortableExecutable;
-using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Caching;
 using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation;
 using Microsoft.CodeAnalysis;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
 namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc
@@ -49,15 +47,11 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc
                 var additionalReferences = new List<MetadataReference>();
                 if (_httpContextAccessor.HttpContext != null)
                 {
-                    var featureMetadata = _httpContextAccessor.HttpContext.GetFeatureMetadata();
-                    var compilerCache = _httpContextAccessor.HttpContext.RequestServices.GetRequiredService<IFeatureCompilerCache>();
-
-                    var (feature, newAssembly) = compilerCache.Get(featureMetadata.Name);
-                    var featureAssembly = feature?.Result?.Assembly;
-                    if (featureAssembly != null)
-                        additionalReferences.Add(CreateMetadataReference(featureAssembly.Location));
-                    else
+                    var featureAssembly = _httpContextAccessor.HttpContext.GetEndpoint().GetEndpointAssembly();
+                    if (featureAssembly == _options.Assembly)
                         additionalReferences.Add(_defaultReference);
+                    else
+                        additionalReferences.Add(CreateMetadataReference(featureAssembly.Location)); // TODO: cache/reuse?
                 }
 
                 var references = _compilationReferences
