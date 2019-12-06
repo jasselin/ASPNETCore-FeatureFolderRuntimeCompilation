@@ -1,7 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Timers;
 using Microsoft.Extensions.Logging;
+using Timer = System.Timers.Timer;
 
 namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation
 {
@@ -13,7 +17,7 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation
 
         private readonly object _pendingUpdatesLock = new object();
         private readonly Timer _throttlingTimer;
-        private bool _updateStarted;
+        private bool _updatePending;
 
         public FeatureUpdater(ILogger<FeatureUpdater> logger)
         {
@@ -23,14 +27,14 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation
             {
                 AutoReset = false // fire once
             };
-            _throttlingTimer.Elapsed += ProcessUpdates;
+            _throttlingTimer.Elapsed += StartProcessingUpdates;
         }
 
         public void Update(FeatureMetadata metadata)
         {
             AddOrUpdateTask(metadata);
 
-            if (!_updateStarted)
+            if (!_updatePending)
                 StartThrottlingTimer();
             else
                 _logger.LogInformation("Update in progress, skipping timer start.");
@@ -60,27 +64,50 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation
             _throttlingTimer.Start();
         }
 
-        private void ProcessUpdates(object sender, ElapsedEventArgs e)
+        private void StartProcessingUpdates(object sender, ElapsedEventArgs e)
         {
-            _updateStarted = true;
+            _updatePending = true;
 
             _logger.LogInformation("ProcessUpdates fired.");
 
-            System.Threading.Thread.Sleep(2000);
-
-            if (_pendingUpdates.Any())
-                _pendingUpdates.First().Pending = true;
-
+            // Not optimal, but at least tasks are batched. Might optimize with continuous updates later.
             while (_pendingUpdates.Any())
             {
-                var task = _pendingUpdates.First();
-                _logger.LogInformation($"Updating feature '{task.Name}'.");
+                ProcessUpdates();
+            }
+
+            _logger.LogInformation("ProcessUpdates done!");
+
+            _updatePending = false;
+        }
+
+        private void ProcessUpdates()
+        {
+            Task[] tasks = null;
+            lock (_pendingUpdatesLock)
+            {
+                tasks = _pendingUpdates
+                    .Select(x => Task.Run(() => UpdateFeature(x)))
+                    .ToArray();
+            }
+
+            Task.WaitAll(tasks);
+        }
+
+        private void UpdateFeature(FeatureUpdaterTask task)
+        {
+            lock (_pendingUpdatesLock)
+            {
                 _pendingUpdates.Remove(task);
             }
 
-            _logger.LogInformation("ProcessUpdates DONE!");
+            _logger.LogInformation($"Updating feature '{task.Name}'.");
+            Thread.Sleep(2000);
+        }
 
-            _updateStarted = false;
+        public bool UpdatePending()
+        {
+            return _updatePending;
         }
     }
 }
