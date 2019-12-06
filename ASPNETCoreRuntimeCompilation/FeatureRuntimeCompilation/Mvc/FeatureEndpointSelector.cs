@@ -1,13 +1,26 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Caching;
+using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing.Matching;
-using System;
-using System.IO;
+using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 
 namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc
 {
     public class FeatureEndpointSelector : EndpointSelector
     {
+        private readonly IFeatureMetadataProvider _metadataProvider;
+        private readonly IFeatureCache _featureCache;
+        private readonly ILogger<FeatureEndpointSelector> _logger;
+
+        public FeatureEndpointSelector(IFeatureMetadataProvider metadataProvider, IFeatureCache featureCache,
+            ILogger<FeatureEndpointSelector> logger)
+        {
+            _metadataProvider = metadataProvider;
+            _featureCache = featureCache;
+            _logger = logger;
+        }
+
         public override Task SelectAsync(HttpContext httpContext, CandidateSet candidates)
         {
             if (candidates.Count == 0)
@@ -16,16 +29,21 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc
             // Find the last built endpoint
             var candidate = candidates[0];
 
-            if (candidates.Count > 1)
+            var feature = _metadataProvider.GetMetadataFor(candidate.Values);
+            var result = _featureCache.Get(feature);
+            if (result != null)
             {
-                var candidateCreationTime = GetCandidateCreationTime(candidate);
-                for (var i = 1; i < candidates.Count; i++)
+                if (!result.Success)
+                    throw new FeatureCompilationFailedException("", result); //TODO: fix ""
+
+                for(var i = candidates.Count - 1; i > 0; i--)
                 {
-                    var creationTime = GetCandidateCreationTime(candidates[i]);
-                    if (creationTime != null && (creationTime >= candidateCreationTime || candidateCreationTime == null))
+                    var assembly = candidates[i].Endpoint.GetEndpointAssembly();
+                    if (result.Assembly == assembly)
                     {
+                        _logger.LogInformation($"=====> Endpoint assembly: {assembly.FullName}");
                         candidate = candidates[i];
-                        candidateCreationTime = creationTime;
+                        break;
                     }
                 }
             }
@@ -34,15 +52,6 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc
             httpContext.Request.RouteValues = candidate.Values;
 
             return Task.CompletedTask;
-        }
-
-        private DateTime? GetCandidateCreationTime(CandidateState candidate)
-        {
-            var assembly = candidate.Endpoint.GetEndpointAssembly();
-            if (string.IsNullOrEmpty(assembly.Location))
-                return null;
-
-            return File.GetLastWriteTime(assembly.Location);
         }
     }
 }

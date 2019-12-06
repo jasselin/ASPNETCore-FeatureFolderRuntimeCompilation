@@ -1,4 +1,5 @@
-﻿using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation;
+﻿using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Caching;
+using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation;
 using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Html;
@@ -38,6 +39,7 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration
             services.AddTransient<IFeatureMetadataProvider, FeatureMetadataProvider>();
             services.AddSingleton<IFeatureUpdater, FeatureUpdater>();
             services.AddSingleton<IFeatureApplicationPartManager, FeatureApplicationPartManager>();
+            services.AddSingleton<IFeatureCache, FeatureCache>();
             services.AddSingleton<IFeatureCompilerService, FeatureCompilerService>();
 
             // Setup

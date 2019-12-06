@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
-using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation;
+using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Caching;
 using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc;
 using Microsoft.Extensions.Logging;
 using Timer = System.Timers.Timer;
@@ -12,7 +12,7 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation
 {
     public class FeatureUpdater : IFeatureUpdater
     {
-        private readonly IFeatureCompilerService _compilerService;
+        private readonly IFeatureCache _featureCache;
         private readonly IFeatureApplicationPartManager _featureAppPartManager;
         private readonly FeatureRuntimeCompilationActionDescriptorChangeProvider _actionDescriptorChangeProvider;
         private readonly ILogger<FeatureUpdater> _logger;
@@ -23,17 +23,17 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation
         private readonly Timer _throttlingTimer;
         private bool _updatePending;
 
-        public FeatureUpdater(IFeatureCompilerService compilerService,
+        public FeatureUpdater(IFeatureCache featureCache,
             IFeatureApplicationPartManager featureAppPartManager,
             FeatureRuntimeCompilationActionDescriptorChangeProvider actionDescriptorChangeProvider,
             ILogger<FeatureUpdater> logger)
         {
-            _compilerService = compilerService;
+            _featureCache = featureCache;
             _featureAppPartManager = featureAppPartManager;
             _actionDescriptorChangeProvider = actionDescriptorChangeProvider;
             _logger = logger;
 
-            _throttlingTimer = new Timer(2000) //TODO: lower
+            _throttlingTimer = new Timer(200) //TODO: lower
             {
                 AutoReset = false // fire once
             };
@@ -111,10 +111,9 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation
             _logger.LogInformation($"Updating feature '{feature.Name}'.");
 
             var sw = Stopwatch.StartNew();
-            var result = _compilerService.Compile(feature.Name, feature.FeaturePath);
+            var result = _featureCache.GetOrUpdate(feature);
             if (!result.Success)
             {
-                //TODO: need error in the browser
                 _logger.LogInformation("Compilation failed, skipping feature update.");
                 return;
             }
