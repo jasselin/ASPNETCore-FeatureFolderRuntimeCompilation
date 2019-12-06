@@ -51,7 +51,7 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc
                     if (featureAssembly == _options.Assembly)
                         additionalReferences.Add(_defaultReference);
                     else
-                        additionalReferences.Add(CreateMetadataReference(featureAssembly.Location)); // TODO: cache/reuse?
+                        additionalReferences.Add(CreateMetadataReference(featureAssembly.Location));
                 }
 
                 var references = _compilationReferences

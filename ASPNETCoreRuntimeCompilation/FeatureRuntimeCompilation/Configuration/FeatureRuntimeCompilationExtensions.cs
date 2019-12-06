@@ -1,5 +1,4 @@
-﻿using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Caching;
-using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation;
+﻿using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation;
 using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Html;
@@ -40,7 +39,6 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration
             services.AddSingleton<IFeatureUpdater, FeatureUpdater>();
             services.AddSingleton<IFeatureApplicationPartManager, FeatureApplicationPartManager>();
             services.AddSingleton<IFeatureCompilerService, FeatureCompilerService>();
-            services.AddSingleton<IFeatureCompilerCache, FeatureCompilerCache>();
 
             // Setup
             if (Directory.Exists(options.AssembliesOutputPath))
