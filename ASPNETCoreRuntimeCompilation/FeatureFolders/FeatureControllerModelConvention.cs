@@ -18,7 +18,7 @@ namespace ASPNETCoreRuntimeCompilation.FeatureFolders
 
         public void Apply(ControllerModel controller)
         {
-            _logger.LogInformation($"FeatureControllerModelConvention.Apply ('{controller.ControllerType.FullName}')");
+            _logger.LogDebug($"FeatureControllerModelConvention.Apply ('{controller.ControllerType.FullName}')");
 
             SetControllerProperties(controller);
             SetControllerRoute(controller);

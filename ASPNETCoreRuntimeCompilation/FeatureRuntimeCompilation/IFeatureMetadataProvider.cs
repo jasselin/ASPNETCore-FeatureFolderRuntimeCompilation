@@ -7,7 +7,6 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation
     public interface IFeatureMetadataProvider
     {
         FeatureMetadata GetMetadataFor(RouteValueDictionary routeValues);
-        [Obsolete]
         FeatureMetadata GetMetadataFor(string featurePath);
     }
 }

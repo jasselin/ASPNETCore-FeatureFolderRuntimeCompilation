@@ -28,7 +28,7 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation
         {
             var compileOptions = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary);
 
-            return CSharpCompilation.Create(assemblyName, options: compileOptions, syntaxTrees: syntaxTrees, references: GetCompilationReferences());
+            return CSharpCompilation.Create(assemblyName, options: compileOptions, syntaxTrees: syntaxTrees, references: _referenceManager.CompilationReferences);
         }
 
         public FeatureCompilerResult Compile(string assemblyName, string controllerDir)
@@ -103,19 +103,6 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation
                 }
             });
             return syntaxTrees;
-        }
-
-        private IReadOnlyList<MetadataReference> GetCompilationReferences()
-        {
-            return _referenceManager.CompilationReferences;
-            //var metadataReferenceFeature = _razorProjectEngine.EngineFeatures.OfType<IMetadataReferenceFeature>().SingleOrDefault();
-
-            ////TODO: still needed?
-            ////var references = metadataReferenceFeature.References
-            ////    .Where(x => !x.Display.EndsWith(string.Concat(_options.AssemblyName, ".dll"), StringComparison.InvariantCultureIgnoreCase))
-            ////    .ToList();
-
-            //return metadataReferenceFeature.References.ToList();
         }
 
         //TODO: Remove?

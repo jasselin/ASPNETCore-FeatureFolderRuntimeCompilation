@@ -1,14 +1,5 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.Loader;
-using System.Text.RegularExpressions;
-using System.Threading;
-using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Caching;
+﻿using System.IO;
+using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation;
 using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration;
 using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
@@ -20,15 +11,18 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation
     {
         private readonly FeatureRuntimeCompilationActionDescriptorChangeProvider _actionDescriptorChangeProvider;
         private readonly ApplicationPartManager _applicationPartManager;
-        private readonly IRuntimeFeatureProvider _featureProvider;
+        private readonly IFeatureMetadataProvider _metadataProvider;
+        private readonly IFeatureUpdater _featureUpdater;
         private readonly ILogger<RuntimeFeatureCompilationWatcher> _logger;
 
         public RuntimeFeatureCompilationWatcher(FeatureRuntimeCompilationActionDescriptorChangeProvider actionDescriptorChangeProvider,
-                ApplicationPartManager applicationPartManager, ILoggerFactory loggerFactory, IRuntimeFeatureProvider compilerCache)
+                ApplicationPartManager applicationPartManager, ILoggerFactory loggerFactory, IFeatureMetadataProvider metadataProvider,
+                IFeatureUpdater featureUpdater)
         {
             _actionDescriptorChangeProvider = actionDescriptorChangeProvider;
             _applicationPartManager = applicationPartManager;
-            _featureProvider = compilerCache;
+            _metadataProvider = metadataProvider;
+            _featureUpdater = featureUpdater;
             _logger = loggerFactory.CreateLogger<RuntimeFeatureCompilationWatcher>();
         }
 
@@ -51,28 +45,33 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation
             {
                 _logger.LogInformation(e.ChangeType.ToString() + ": " + e.FullPath);
 
-                var featureDirectory = Path.GetDirectoryName(e.FullPath);
-                var feature = _featureProvider.GetFeature(featureDirectory);
+                var featurePath = Path.GetDirectoryName(e.FullPath);
+                var metadata = _metadataProvider.GetMetadataFor(featurePath);
 
-                var featureAssemblyRegex = new Regex(@$"{feature.Name}.\w+-\w+\-\w+\-\w+\-\w+");
+                _featureUpdater.Update(metadata);
 
-                var parts = _applicationPartManager.ApplicationParts
-                    .OfType<AssemblyPart>()
-                    .Where(x => featureAssemblyRegex.IsMatch(x.Name))
-                    .ToArray();
+                //var featureDirectory = Path.GetDirectoryName(e.FullPath);
+                //var feature = _featureProvider.GetFeature(featureDirectory);
 
-                foreach (var part in parts)
-                {
-                    _logger.LogInformation($"Removing assembly '{part.Assembly.FullName}' from ApplicationPartManager.");
-                    _applicationPartManager.ApplicationParts.Remove(part);
-                }
+                //var featureAssemblyRegex = new Regex(@$"{feature.Name}.\w+-\w+\-\w+\-\w+\-\w+");
 
-                _logger.LogInformation($"Adding assembly '{feature.Assembly.FullName} to ApplicationPartManager.'");
-                var assemblyPart = new AssemblyPart(feature.Assembly);
-                _applicationPartManager.ApplicationParts.Add(assemblyPart);
+                //var parts = _applicationPartManager.ApplicationParts
+                //    .OfType<AssemblyPart>()
+                //    .Where(x => featureAssemblyRegex.IsMatch(x.Name))
+                //    .ToArray();
 
-                _logger.LogInformation("Triggering ActionDescriptonChangerProvider refresh.");
-                _actionDescriptorChangeProvider.TokenSource.Cancel();
+                //foreach (var part in parts)
+                //{
+                //    _logger.LogInformation($"Removing assembly '{part.Assembly.FullName}' from ApplicationPartManager.");
+                //    _applicationPartManager.ApplicationParts.Remove(part);
+                //}
+
+                //_logger.LogInformation($"Adding assembly '{feature.Assembly.FullName} to ApplicationPartManager.'");
+                //var assemblyPart = new AssemblyPart(feature.Assembly);
+                //_applicationPartManager.ApplicationParts.Add(assemblyPart);
+
+                //_logger.LogInformation("Triggering ActionDescriptonChangerProvider refresh.");
+                //_actionDescriptorChangeProvider.TokenSource.Cancel();
             }
 
             watcher.Created += changeEvent; // Create file
