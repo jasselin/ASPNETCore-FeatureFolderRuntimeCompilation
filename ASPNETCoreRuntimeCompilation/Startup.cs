@@ -47,7 +47,6 @@ namespace ASPNETCoreRuntimeCompilation
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
-            // TODO: Move to library, switch to internal classes
             app.UseFeatureRuntimeCompilation();
 
             app.UseRouting();
