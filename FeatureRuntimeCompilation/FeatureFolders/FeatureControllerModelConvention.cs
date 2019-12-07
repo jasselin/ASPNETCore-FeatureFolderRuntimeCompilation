@@ -1,9 +1,9 @@
-﻿using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration;
+﻿using FeatureRuntimeCompilation.Configuration;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.Extensions.Logging;
 using System.Linq;
 
-namespace ASPNETCoreRuntimeCompilation.FeatureFolders
+namespace FeatureRuntimeCompilation.FeatureFolders
 {
     public class FeatureControllerModelConvention : IControllerModelConvention
     {
@@ -23,7 +23,7 @@ namespace ASPNETCoreRuntimeCompilation.FeatureFolders
             SetControllerProperties(controller);
             SetControllerRoute(controller);
         }
-        
+
         private void SetControllerProperties(ControllerModel controller)
         {
             var controllerType = controller.ControllerType;

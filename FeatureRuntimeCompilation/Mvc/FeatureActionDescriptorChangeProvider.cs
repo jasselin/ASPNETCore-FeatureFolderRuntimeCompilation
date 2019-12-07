@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Primitives;
 using System.Threading;
 
-namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc
+namespace FeatureRuntimeCompilation.Mvc
 {
     public class FeatureActionDescriptorChangeProvider : IActionDescriptorChangeProvider
     {

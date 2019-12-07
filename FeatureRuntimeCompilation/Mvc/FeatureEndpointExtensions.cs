@@ -3,7 +3,7 @@ using System.Reflection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Controllers;
 
-namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc
+namespace FeatureRuntimeCompilation.Mvc
 {
     public static class FeatureEndpointExtensions
     {

@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Primitives;
 
-namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Caching
+namespace FeatureRuntimeCompilation.Caching
 {
     public interface IFeatureChangeTokenProvider
     {

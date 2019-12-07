@@ -1,12 +1,12 @@
-﻿using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Caching;
-using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation;
-using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration;
+﻿using FeatureRuntimeCompilation.Caching;
+using FeatureRuntimeCompilation.Compilation;
+using FeatureRuntimeCompilation.Configuration;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing.Matching;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 
-namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc
+namespace FeatureRuntimeCompilation.Mvc
 {
     public class FeatureEndpointSelector : EndpointSelector
     {
@@ -40,7 +40,7 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc
                 if (!result.Success)
                     throw new FeatureCompilationFailedException(_options.ProjectPath, result);
 
-                for(var i = candidates.Count - 1; i > 0; i--)
+                for (var i = candidates.Count - 1; i > 0; i--)
                 {
                     var assembly = candidates[i].Endpoint.GetEndpointAssembly();
                     if (result.Assembly == assembly)

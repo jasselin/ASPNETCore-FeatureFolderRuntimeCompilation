@@ -1,4 +1,4 @@
-﻿namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation
+﻿namespace FeatureRuntimeCompilation.Compilation
 {
     public interface IFeatureCompiler
     {

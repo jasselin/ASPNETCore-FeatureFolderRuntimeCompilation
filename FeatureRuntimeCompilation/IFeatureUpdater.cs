@@ -1,4 +1,4 @@
-﻿namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation
+﻿namespace FeatureRuntimeCompilation
 {
     public interface IFeatureUpdater
     {

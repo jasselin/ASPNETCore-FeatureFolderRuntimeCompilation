@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace ASPNETCoreRuntimeCompilation.FeatureFolders
+namespace FeatureRuntimeCompilation.FeatureFolders
 {
     public static class FeatureFoldersExtensions
     {

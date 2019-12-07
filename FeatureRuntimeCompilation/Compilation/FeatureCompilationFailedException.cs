@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation
+namespace FeatureRuntimeCompilation.Compilation
 {
     public class FeatureCompilationFailedException : Exception
     {

@@ -1,9 +1,9 @@
 ﻿using System.Collections.Concurrent;
 using System.Diagnostics;
-using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation;
+using FeatureRuntimeCompilation.Compilation;
 using Microsoft.Extensions.Logging;
 
-namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Caching
+namespace FeatureRuntimeCompilation.Caching
 {
     public class FeatureCache : IFeatureCache
     {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.Loader;
 
-namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation
+namespace FeatureRuntimeCompilation.Compilation
 {
     public class FeatureCompilerResult
     {

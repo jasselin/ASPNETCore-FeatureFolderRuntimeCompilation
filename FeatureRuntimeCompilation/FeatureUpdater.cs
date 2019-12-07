@@ -1,13 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using FeatureRuntimeCompilation.Caching;
+using FeatureRuntimeCompilation.Mvc;
+using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
-using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Caching;
-using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc;
-using Microsoft.Extensions.Logging;
 using Timer = System.Timers.Timer;
 
-namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation
+namespace FeatureRuntimeCompilation
 {
     public class FeatureUpdater : IFeatureUpdater
     {
@@ -135,9 +135,6 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation
             _logger.LogInformation($"Feature '{feature.Name}' updated.");
         }
 
-        public bool UpdatePending()
-        {
-            return _pendingUpdates.Any();
-        }
+        public bool UpdatePending() => _pendingUpdates.Any();
     }
 }

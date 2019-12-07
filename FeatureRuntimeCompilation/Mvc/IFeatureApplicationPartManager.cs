@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc
+namespace FeatureRuntimeCompilation.Mvc
 {
     public interface IFeatureApplicationPartManager
     {

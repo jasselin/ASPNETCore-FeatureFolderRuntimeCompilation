@@ -1,6 +1,6 @@
-﻿using ASPNETCoreRuntimeCompilation.FeatureFolders;
-using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration;
-using ASPNETCoreRuntimeCompilation.Features.FeatureA;
+﻿using ASPNETCoreRuntimeCompilation.Features.FeatureA;
+using FeatureRuntimeCompilation.Configuration;
+using FeatureRuntimeCompilation.FeatureFolders;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -11,7 +11,7 @@ namespace ASPNETCoreRuntimeCompilation
 {
     public class Startup
     {
-        private IWebHostEnvironment _env;
+        private readonly IWebHostEnvironment _env;
 
         public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
@@ -36,9 +36,13 @@ namespace ASPNETCoreRuntimeCompilation
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
+            {
                 app.UseDeveloperExceptionPage();
+            }
             else
+            {
                 app.UseHsts();
+            }
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();

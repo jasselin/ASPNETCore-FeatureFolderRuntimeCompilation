@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 
-namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc
+namespace FeatureRuntimeCompilation.Mvc
 {
     public class FeatureRuntimeCompilationMiddleware
     {

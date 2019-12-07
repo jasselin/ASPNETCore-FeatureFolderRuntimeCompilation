@@ -1,4 +1,4 @@
-﻿namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Caching
+﻿namespace FeatureRuntimeCompilation.Caching
 {
     public interface IFeatureChecksumGenerator
     {

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.Razor;
 using System;
 using System.Collections.Generic;
 
-namespace ASPNETCoreRuntimeCompilation.FeatureFolders
+namespace FeatureRuntimeCompilation.FeatureFolders
 {
     public class FeatureViewLocationExpander : IViewLocationExpander
     {

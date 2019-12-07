@@ -1,5 +1,5 @@
-﻿using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Caching;
-using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc;
+﻿using FeatureRuntimeCompilation.Caching;
+using FeatureRuntimeCompilation.Mvc;
 using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation;
 using Microsoft.AspNetCore.Razor.Hosting;
@@ -7,7 +7,7 @@ using Microsoft.Extensions.Options;
 using System;
 using System.Linq;
 
-namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration
+namespace FeatureRuntimeCompilation.Configuration
 {
     public class MvcRazorRuntimeCompilationOptionsConfiguration : IConfigureOptions<MvcRazorRuntimeCompilationOptions>
     {
@@ -15,7 +15,7 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration
         private readonly IFeatureChangeTokenProvider _tokenProvider;
         private readonly FeatureRuntimeCompilationOptions _options;
 
-        public MvcRazorRuntimeCompilationOptionsConfiguration(IFeatureMetadataProvider metadataProvider, 
+        public MvcRazorRuntimeCompilationOptionsConfiguration(IFeatureMetadataProvider metadataProvider,
             IFeatureChangeTokenProvider tokenProvider, FeatureRuntimeCompilationOptions options)
         {
             _metadataProvider = metadataProvider;

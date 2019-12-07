@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 
-namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation
+namespace FeatureRuntimeCompilation
 {
     public interface IFeatureMetadataProvider
     {

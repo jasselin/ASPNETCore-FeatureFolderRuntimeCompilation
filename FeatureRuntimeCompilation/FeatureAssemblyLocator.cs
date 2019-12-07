@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation
+namespace FeatureRuntimeCompilation
 {
     // Help resolve dynamically created assemblies
     public static class FeatureAssemblyLocator

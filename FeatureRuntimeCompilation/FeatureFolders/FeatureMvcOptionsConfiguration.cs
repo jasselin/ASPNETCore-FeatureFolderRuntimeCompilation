@@ -1,10 +1,10 @@
-﻿using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration;
+﻿using FeatureRuntimeCompilation.Configuration;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace ASPNETCoreRuntimeCompilation.FeatureFolders
+namespace FeatureRuntimeCompilation.FeatureFolders
 {
     public class FeatureMvcOptionsConfiguration : IConfigureOptions<MvcOptions>
     {
@@ -17,9 +17,6 @@ namespace ASPNETCoreRuntimeCompilation.FeatureFolders
             _logger = logger;
         }
 
-        public void Configure(MvcOptions options)
-        {
-            options.Conventions.Add(new FeatureControllerModelConvention(_options, _logger));
-        }
+        public void Configure(MvcOptions options) => options.Conventions.Add(new FeatureControllerModelConvention(_options, _logger));
     }
 }

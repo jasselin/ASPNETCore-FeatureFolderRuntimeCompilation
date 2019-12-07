@@ -1,9 +1,9 @@
-﻿using System.IO;
-using System.Linq;
-using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration;
+﻿using FeatureRuntimeCompilation.Configuration;
 using Microsoft.AspNetCore.Routing;
+using System.IO;
+using System.Linq;
 
-namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation
+namespace FeatureRuntimeCompilation
 {
     public class FeatureMetadataProvider : IFeatureMetadataProvider
     {

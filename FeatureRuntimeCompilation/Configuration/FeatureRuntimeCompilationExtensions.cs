@@ -1,6 +1,6 @@
-﻿using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Caching;
-using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation;
-using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc;
+﻿using FeatureRuntimeCompilation.Caching;
+using FeatureRuntimeCompilation.Compilation;
+using FeatureRuntimeCompilation.Mvc;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
@@ -10,7 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration
+namespace FeatureRuntimeCompilation.Configuration
 {
     public static class FeatureRuntimeCompilationExtensions
     {

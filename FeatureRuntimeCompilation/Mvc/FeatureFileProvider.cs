@@ -1,12 +1,11 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Caching;
-using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration;
+﻿using FeatureRuntimeCompilation.Caching;
+using FeatureRuntimeCompilation.Configuration;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Primitives;
+using System.IO;
+using System.Linq;
 
-namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc
+namespace FeatureRuntimeCompilation.Mvc
 {
     internal class FeatureFileProvider : IFileProvider
     {
@@ -15,7 +14,7 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc
         private readonly FeatureRuntimeCompilationOptions _options;
         private readonly PhysicalFileProvider _innerProvider;
 
-        public FeatureFileProvider(IFeatureMetadataProvider metadataProvider, 
+        public FeatureFileProvider(IFeatureMetadataProvider metadataProvider,
              IFeatureChangeTokenProvider tokenProvider, FeatureRuntimeCompilationOptions options)
         {
             _metadataProvider = metadataProvider;

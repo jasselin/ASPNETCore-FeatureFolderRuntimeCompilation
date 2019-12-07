@@ -1,4 +1,4 @@
-﻿using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration;
+﻿using FeatureRuntimeCompilation.Configuration;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation;
 using Microsoft.CodeAnalysis;
@@ -11,7 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Loader;
 
-namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation
+namespace FeatureRuntimeCompilation.Compilation
 {
     internal class FeatureCompiler : IFeatureCompiler
     {

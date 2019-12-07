@@ -1,6 +1,6 @@
-﻿using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation;
+﻿using FeatureRuntimeCompilation.Compilation;
 
-namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Caching
+namespace FeatureRuntimeCompilation.Caching
 {
     public interface IFeatureCache
     {

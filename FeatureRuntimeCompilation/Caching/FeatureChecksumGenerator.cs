@@ -3,7 +3,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Caching
+namespace FeatureRuntimeCompilation.Caching
 {
     public class FeatureChecksumGenerator : IFeatureChecksumGenerator
     {

@@ -1,8 +1,8 @@
-﻿using System.IO;
-using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration;
+﻿using FeatureRuntimeCompilation.Configuration;
 using Microsoft.Extensions.Logging;
+using System.IO;
 
-namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation
+namespace FeatureRuntimeCompilation
 {
     public class FeatureRuntimeCompilationWatcher
     {
