@@ -18,8 +18,6 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration
         {
             var services = mvcBuilder.Services;
 
-            //services.AddSingleton<IFeatureRuntimeCompilationServiceProvider, FeatureRuntimeCompilationServiceProvider>();
-
             // ASP.NET (Http, Routing, Razor)
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<EndpointSelector, FeatureEndpointSelector>();

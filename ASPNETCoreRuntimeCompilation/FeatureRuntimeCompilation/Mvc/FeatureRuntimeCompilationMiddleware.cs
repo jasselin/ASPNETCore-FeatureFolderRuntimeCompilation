@@ -44,6 +44,9 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc
             else
                 _logger.LogInformation("All updates completed.");
 
+
+            //context.RequestServices = // replace default container with feature container
+
             await _next(context);
         }
     }
