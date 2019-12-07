@@ -19,25 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.Extensions" Version="3.1.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="3.1.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="3.1.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation\Resources.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Update="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation\Resources.resx">
-      <CustomToolNamespace>Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation</CustomToolNamespace>
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
+    <ProjectReference Include="..\FeatureRuntimeCompilation\FeatureRuntimeCompilation.csproj" />
   </ItemGroup>
 
 </Project>
