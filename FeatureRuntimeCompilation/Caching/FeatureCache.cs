@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 
 namespace FeatureRuntimeCompilation.Caching
 {
-    public class FeatureCache : IFeatureCache
+    internal class FeatureCache : IFeatureCache
     {
         private readonly IFeatureCompiler _compiler;
         private readonly IFeatureChecksumGenerator _checksumGenerator;

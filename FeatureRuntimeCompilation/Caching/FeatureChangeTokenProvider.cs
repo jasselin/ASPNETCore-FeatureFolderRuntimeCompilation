@@ -4,7 +4,7 @@ using Microsoft.Extensions.Primitives;
 
 namespace FeatureRuntimeCompilation.Caching
 {
-    public class FeatureChangeTokenProvider : IFeatureChangeTokenProvider
+    internal class FeatureChangeTokenProvider : IFeatureChangeTokenProvider
     {
         private readonly ConcurrentDictionary<string, (CancellationTokenSource, IChangeToken)> _tokens = new ConcurrentDictionary<string, (CancellationTokenSource, IChangeToken)>();
 

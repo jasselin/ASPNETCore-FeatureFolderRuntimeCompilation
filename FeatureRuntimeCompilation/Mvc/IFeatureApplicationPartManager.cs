@@ -2,7 +2,7 @@
 
 namespace FeatureRuntimeCompilation.Mvc
 {
-    public interface IFeatureApplicationPartManager
+    internal interface IFeatureApplicationPartManager
     {
         void Add(Assembly featureAssembly);
         void Remove(FeatureMetadata feature);

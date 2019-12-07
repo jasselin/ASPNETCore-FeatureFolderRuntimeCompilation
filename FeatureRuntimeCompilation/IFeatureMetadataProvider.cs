@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Routing;
 
 namespace FeatureRuntimeCompilation
 {
-    public interface IFeatureMetadataProvider
+    internal interface IFeatureMetadataProvider
     {
         FeatureMetadata GetMetadataFor(RouteValueDictionary routeValues);
         FeatureMetadata GetMetadataFor(string featurePath);

@@ -6,7 +6,7 @@ using System.Runtime.Loader;
 
 namespace FeatureRuntimeCompilation.Compilation
 {
-    public class FeatureCompilerResult
+    internal class FeatureCompilerResult
     {
         public FeatureCompilerResult(IEnumerable<DiagnosticMessage> failures)
         {

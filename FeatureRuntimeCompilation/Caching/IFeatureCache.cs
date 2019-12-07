@@ -2,7 +2,7 @@
 
 namespace FeatureRuntimeCompilation.Caching
 {
-    public interface IFeatureCache
+    internal interface IFeatureCache
     {
         FeatureCompilerResult Get(FeatureMetadata feature);
         (FeatureCompilerResult, bool hasUpdated) GetOrUpdate(FeatureMetadata feature);

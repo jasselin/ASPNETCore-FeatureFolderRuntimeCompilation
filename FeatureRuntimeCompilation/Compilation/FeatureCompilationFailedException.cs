@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace FeatureRuntimeCompilation.Compilation
 {
-    public class FeatureCompilationFailedException : Exception
+    internal class FeatureCompilationFailedException : Exception
     {
         public FeatureCompilationFailedException(string rootPath, FeatureCompilerResult result)
             : base(FormatMessage(rootPath, result.Failures))

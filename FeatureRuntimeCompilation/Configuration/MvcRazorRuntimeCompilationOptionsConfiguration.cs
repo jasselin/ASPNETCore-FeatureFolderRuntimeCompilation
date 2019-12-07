@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace FeatureRuntimeCompilation.Configuration
 {
-    public class MvcRazorRuntimeCompilationOptionsConfiguration : IConfigureOptions<MvcRazorRuntimeCompilationOptions>
+    internal class MvcRazorRuntimeCompilationOptionsConfiguration : IConfigureOptions<MvcRazorRuntimeCompilationOptions>
     {
         private readonly IFeatureMetadataProvider _metadataProvider;
         private readonly IFeatureChangeTokenProvider _tokenProvider;

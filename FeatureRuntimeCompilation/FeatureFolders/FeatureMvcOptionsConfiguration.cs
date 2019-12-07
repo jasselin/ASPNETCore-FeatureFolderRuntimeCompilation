@@ -6,7 +6,7 @@ using Microsoft.Extensions.Options;
 
 namespace FeatureRuntimeCompilation.FeatureFolders
 {
-    public class FeatureMvcOptionsConfiguration : IConfigureOptions<MvcOptions>
+    internal class FeatureMvcOptionsConfiguration : IConfigureOptions<MvcOptions>
     {
         private readonly FeatureRuntimeCompilationOptions _options;
         private readonly ILogger<FeatureControllerModelConvention> _logger;

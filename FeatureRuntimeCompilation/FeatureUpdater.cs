@@ -9,7 +9,7 @@ using Timer = System.Timers.Timer;
 
 namespace FeatureRuntimeCompilation
 {
-    public class FeatureUpdater : IFeatureUpdater
+    internal class FeatureUpdater : IFeatureUpdater
     {
         private readonly IFeatureCache _featureCache;
         private readonly IFeatureChangeTokenProvider _featureTokenProvider;

@@ -1,6 +1,6 @@
 ﻿namespace FeatureRuntimeCompilation
 {
-    public interface IFeatureUpdater
+    internal interface IFeatureUpdater
     {
         void Update(FeatureMetadata metadata);
         bool UpdatePending();

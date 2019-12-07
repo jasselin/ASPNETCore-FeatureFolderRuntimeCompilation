@@ -4,7 +4,7 @@ using System.IO;
 
 namespace FeatureRuntimeCompilation
 {
-    public class FeatureRuntimeCompilationWatcher
+    internal class FeatureRuntimeCompilationWatcher
     {
         private readonly IFeatureMetadataProvider _metadataProvider;
         private readonly IFeatureUpdater _featureUpdater;

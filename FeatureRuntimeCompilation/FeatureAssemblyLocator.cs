@@ -5,7 +5,7 @@ using System.Reflection;
 namespace FeatureRuntimeCompilation
 {
     // Help resolve dynamically created assemblies
-    public static class FeatureAssemblyLocator
+    internal static class FeatureAssemblyLocator
     {
         private static Dictionary<string, Assembly> _assemblies;
 

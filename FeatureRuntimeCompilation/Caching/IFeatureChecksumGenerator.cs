@@ -1,6 +1,6 @@
 ﻿namespace FeatureRuntimeCompilation.Caching
 {
-    public interface IFeatureChecksumGenerator
+    internal interface IFeatureChecksumGenerator
     {
         string GetChecksum(FeatureMetadata metadata);
     }

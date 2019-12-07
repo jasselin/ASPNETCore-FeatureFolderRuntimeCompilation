@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace FeatureRuntimeCompilation.Mvc
 {
-    public class FeatureEndpointSelector : EndpointSelector
+    internal class FeatureEndpointSelector : EndpointSelector
     {
         private readonly FeatureRuntimeCompilationOptions _options;
         private readonly IFeatureMetadataProvider _metadataProvider;

@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace FeatureRuntimeCompilation.FeatureFolders
 {
-    public class FeatureControllerModelConvention : IControllerModelConvention
+    internal class FeatureControllerModelConvention : IControllerModelConvention
     {
         private readonly FeatureRuntimeCompilationOptions _options;
         private readonly ILogger<FeatureControllerModelConvention> _logger;

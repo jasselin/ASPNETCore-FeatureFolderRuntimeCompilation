@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc.Controllers;
 
 namespace FeatureRuntimeCompilation.Mvc
 {
-    public static class FeatureEndpointExtensions
+    internal static class FeatureEndpointExtensions
     {
         public static Assembly GetEndpointAssembly(this Endpoint endpoint)
         {

@@ -4,7 +4,7 @@ using System.Threading;
 
 namespace FeatureRuntimeCompilation.Mvc
 {
-    public class FeatureActionDescriptorChangeProvider : IActionDescriptorChangeProvider
+    internal class FeatureActionDescriptorChangeProvider : IActionDescriptorChangeProvider
     {
         public CancellationTokenSource TokenSource { get; private set; }
 

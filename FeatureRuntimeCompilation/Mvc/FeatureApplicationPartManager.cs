@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace FeatureRuntimeCompilation.Mvc
 {
-    public class FeatureApplicationPartManager : IFeatureApplicationPartManager
+    internal class FeatureApplicationPartManager : IFeatureApplicationPartManager
     {
         private readonly ApplicationPartManager _appPartManager;
         private readonly ILogger<FeatureApplicationPartManager> _logger;

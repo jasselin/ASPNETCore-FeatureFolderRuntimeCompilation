@@ -1,6 +1,6 @@
 ﻿namespace FeatureRuntimeCompilation
 {
-    public class FeatureMetadata
+    internal class FeatureMetadata
     {
         public FeatureMetadata(string featureName, string controllerTypeName, string featurePath)
         {

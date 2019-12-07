@@ -5,7 +5,7 @@ using System.Text;
 
 namespace FeatureRuntimeCompilation.Caching
 {
-    public class FeatureChecksumGenerator : IFeatureChecksumGenerator
+    internal class FeatureChecksumGenerator : IFeatureChecksumGenerator
     {
         public string GetChecksum(FeatureMetadata metadata)
         {

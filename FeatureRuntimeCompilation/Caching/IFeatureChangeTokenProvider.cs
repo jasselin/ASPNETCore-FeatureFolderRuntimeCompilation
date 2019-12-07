@@ -2,7 +2,7 @@
 
 namespace FeatureRuntimeCompilation.Caching
 {
-    public interface IFeatureChangeTokenProvider
+    internal interface IFeatureChangeTokenProvider
     {
         IChangeToken GetToken(FeatureMetadata feature);
         void CancelToken(FeatureMetadata feature);

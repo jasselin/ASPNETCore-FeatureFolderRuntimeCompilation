@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace FeatureRuntimeCompilation.Mvc
 {
-    public class FeatureRuntimeCompilationMiddleware
+    internal class FeatureRuntimeCompilationMiddleware
     {
         private readonly RequestDelegate _next;
 

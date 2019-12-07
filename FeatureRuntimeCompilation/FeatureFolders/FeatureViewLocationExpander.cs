@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace FeatureRuntimeCompilation.FeatureFolders
 {
-    public class FeatureViewLocationExpander : IViewLocationExpander
+    internal class FeatureViewLocationExpander : IViewLocationExpander
     {
         public IEnumerable<string> ExpandViewLocations(ViewLocationExpanderContext context, IEnumerable<string> viewLocations)
         {

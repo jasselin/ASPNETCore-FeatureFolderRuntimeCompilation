@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace FeatureRuntimeCompilation
 {
-    public class FeatureMetadataProvider : IFeatureMetadataProvider
+    internal class FeatureMetadataProvider : IFeatureMetadataProvider
     {
         private readonly FeatureRuntimeCompilationOptions _options;
 

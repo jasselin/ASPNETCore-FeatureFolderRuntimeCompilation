@@ -1,6 +1,6 @@
 ﻿namespace FeatureRuntimeCompilation.Compilation
 {
-    public interface IFeatureCompiler
+    internal interface IFeatureCompiler
     {
         FeatureCompilerResult Compile(string assemblyName, string featurePath, string checksum);
     }
