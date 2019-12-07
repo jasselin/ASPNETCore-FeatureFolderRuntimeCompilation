@@ -4,8 +4,10 @@ namespace FeatureRuntimeCompilation.FeatureFolders
 {
     public static class FeatureFoldersExtensions
     {
-        public static IMvcBuilder AddFeatureFolders(this IMvcBuilder mvcBuilder)
+        public static IMvcBuilder AddFeatureFolders(this IMvcBuilder mvcBuilder, FeatureFolderOptions options)
         {
+            mvcBuilder.Services.AddSingleton(options);
+
             mvcBuilder.Services.ConfigureOptions<FeatureMvcOptionsConfiguration>();
 
             mvcBuilder.AddRazorOptions(options =>

@@ -8,10 +8,10 @@ namespace FeatureRuntimeCompilation.FeatureFolders
 {
     internal class FeatureMvcOptionsConfiguration : IConfigureOptions<MvcOptions>
     {
-        private readonly FeatureRuntimeCompilationOptions _options;
+        private readonly FeatureFolderOptions _options;
         private readonly ILogger<FeatureControllerModelConvention> _logger;
 
-        public FeatureMvcOptionsConfiguration(FeatureRuntimeCompilationOptions options, ILogger<FeatureControllerModelConvention> logger)
+        public FeatureMvcOptionsConfiguration(FeatureFolderOptions options, ILogger<FeatureControllerModelConvention> logger)
         {
             _options = options;
             _logger = logger;

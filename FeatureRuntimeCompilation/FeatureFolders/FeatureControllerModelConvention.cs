@@ -1,5 +1,4 @@
-﻿using FeatureRuntimeCompilation.Configuration;
-using Microsoft.AspNetCore.Mvc.ApplicationModels;
+﻿using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.Extensions.Logging;
 using System.Linq;
 
@@ -7,10 +6,10 @@ namespace FeatureRuntimeCompilation.FeatureFolders
 {
     internal class FeatureControllerModelConvention : IControllerModelConvention
     {
-        private readonly FeatureRuntimeCompilationOptions _options;
+        private readonly FeatureFolderOptions _options;
         private readonly ILogger<FeatureControllerModelConvention> _logger;
 
-        public FeatureControllerModelConvention(FeatureRuntimeCompilationOptions options, ILogger<FeatureControllerModelConvention> logger)
+        public FeatureControllerModelConvention(FeatureFolderOptions options, ILogger<FeatureControllerModelConvention> logger)
         {
             _options = options;
             _logger = logger;

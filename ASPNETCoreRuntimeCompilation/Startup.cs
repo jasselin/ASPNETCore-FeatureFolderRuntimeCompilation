@@ -25,7 +25,7 @@ namespace ASPNETCoreRuntimeCompilation
         {
             services
                 .AddControllersWithViews()
-                .AddFeatureFolders()
+                .AddFeatureFolders(new FeatureFolderOptions(string.Concat(typeof(Startup).Assembly.GetName().Name, ".Features")))
                 .AddFeatureRuntimeCompilation(new FeatureRuntimeCompilationOptions(
                     typeof(Startup).Assembly, // Assembly to be dynamically compiled at runtime
                     _env.ContentRootPath));
