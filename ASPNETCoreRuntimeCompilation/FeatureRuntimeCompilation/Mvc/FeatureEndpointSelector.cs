@@ -45,7 +45,7 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc
                     var assembly = candidates[i].Endpoint.GetEndpointAssembly();
                     if (result.Assembly == assembly)
                     {
-                        _logger.LogInformation($"=====> Endpoint assembly: {assembly.FullName}");
+                        _logger.LogDebug($"Endpoint assembly: {assembly.FullName}");
                         candidate = candidates[i];
                         break;
                     }

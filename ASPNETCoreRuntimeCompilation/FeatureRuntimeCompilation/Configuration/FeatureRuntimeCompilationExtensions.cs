@@ -2,16 +2,12 @@
 using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Compilation;
 using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation;
-using Microsoft.AspNetCore.Razor.Hosting;
 using Microsoft.AspNetCore.Routing.Matching;
 using Microsoft.Extensions.DependencyInjection;
-using System;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration
@@ -42,6 +38,7 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration
             services.AddSingleton<IFeatureCache, FeatureCache>();
             services.AddSingleton<IFeatureCompiler, FeatureCompiler>();
             services.AddTransient<IFeatureChecksumGenerator, FeatureChecksumGenerator>();
+            services.AddSingleton<IFeatureChangeTokenProvider, FeatureChangeTokenProvider>();
 
             // Setup
             if (Directory.Exists(options.AssembliesOutputPath))
@@ -56,18 +53,8 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration
 
         private static void AddRazorRuntimeCompilation(this IMvcBuilder mvcBuilder, FeatureRuntimeCompilationOptions options)
         {
-            mvcBuilder.AddRazorRuntimeCompilation(opts =>
-            {
-                opts.FileProviders.Clear();
-                opts.FileProviders.Add(new FeaturePhysicalFileProvider(options.ProjectPath));
-
-                // References are missing because we remove the main assembly application part
-                foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies().Where(x => x != options.Assembly))
-                    opts.AdditionalReferencePaths.Add(assembly.Location);
-
-                opts.AdditionalReferencePaths.Add(typeof(IHtmlContent).Assembly.Location);
-                opts.AdditionalReferencePaths.Add(typeof(RazorCompiledItem).Assembly.Location);
-            });
+            RazorRuntimeCompilationMvcCoreBuilderExtensions.AddServices(mvcBuilder.Services);
+            mvcBuilder.Services.ConfigureOptions<MvcRazorRuntimeCompilationOptionsConfiguration>();
         }
 
         public static IApplicationBuilder UseFeatureRuntimeCompilation(this IApplicationBuilder app)

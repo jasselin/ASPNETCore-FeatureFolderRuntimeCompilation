@@ -3,13 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection.PortableExecutable;
-using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Caching;
 using ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Configuration;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation;
 using Microsoft.CodeAnalysis;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -19,21 +17,17 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<FeatureRazorReferenceManager> _logger;
-        private readonly IFeatureMetadataProvider _metadataProvider;
         private readonly FeatureRuntimeCompilationOptions _options;
-        private object _refLock = new object();
 
         private MetadataReference _defaultReference;
         private IList<MetadataReference> _compilationReferences;
 
         public FeatureRazorReferenceManager(ApplicationPartManager partManager, IOptions<MvcRazorRuntimeCompilationOptions> razorOptions,
-            FeatureRuntimeCompilationOptions options, IHttpContextAccessor httpContextAccessor, ILogger<FeatureRazorReferenceManager> logger,
-            IFeatureMetadataProvider metadataProvider)
+            FeatureRuntimeCompilationOptions options, IHttpContextAccessor httpContextAccessor, ILogger<FeatureRazorReferenceManager> logger)
             : base(partManager, razorOptions)
         {
             _httpContextAccessor = httpContextAccessor;
             _logger = logger;
-            _metadataProvider = metadataProvider;
             _options = options;
         }
 
@@ -59,12 +53,12 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc
                     var featureAssembly = _httpContextAccessor.HttpContext.GetEndpoint().GetEndpointAssembly();
                     if (featureAssembly == _options.Assembly)
                     {
-                        _logger.LogWarning($"Razor ref assembly: DEFAULT");
+                        _logger.LogDebug($"Razor ref assembly: DEFAULT");
                         additionalReferences.Add(_defaultReference);
                     }
                     else
                     {
-                        _logger.LogWarning($"Razor ref assembly: {featureAssembly.FullName}");
+                        _logger.LogDebug($"Razor ref assembly: {featureAssembly.FullName}");
                         additionalReferences.Add(CreateMetadataReference(featureAssembly.Location));
                     }
                 }

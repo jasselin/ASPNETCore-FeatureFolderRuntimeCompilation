@@ -12,6 +12,7 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation
     public class FeatureUpdater : IFeatureUpdater
     {
         private readonly IFeatureCache _featureCache;
+        private readonly IFeatureChangeTokenProvider _featureTokenProvider;
         private readonly IFeatureApplicationPartManager _featureAppPartManager;
         private readonly FeatureActionDescriptorChangeProvider _actionDescriptorChangeProvider;
         private readonly ILogger<FeatureUpdater> _logger;
@@ -23,11 +24,13 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation
         private bool _updatePending;
 
         public FeatureUpdater(IFeatureCache featureCache,
+            IFeatureChangeTokenProvider featureTokenProvider,
             IFeatureApplicationPartManager featureAppPartManager,
             FeatureActionDescriptorChangeProvider actionDescriptorChangeProvider,
             ILogger<FeatureUpdater> logger)
         {
             _featureCache = featureCache;
+            _featureTokenProvider = featureTokenProvider;
             _featureAppPartManager = featureAppPartManager;
             _actionDescriptorChangeProvider = actionDescriptorChangeProvider;
             _logger = logger;
@@ -54,7 +57,7 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation
             // Ensure thread safety while updating tasks to avoid duplication
             lock (_pendingUpdatesLock)
             {
-                _logger.LogInformation($"Adding a task to update feature '{feature.Name}'.");
+                _logger.LogDebug($"Adding a task to update feature '{feature.Name}'.");
 
                 // Pending task for the same feature is removed and added to the end of the list
                 // Tasks that are not pending started compiling, so we add another task to the end of the list to update the feature again.
@@ -126,6 +129,7 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation
             _featureAppPartManager.Remove(feature);
             _featureAppPartManager.Add(result.Assembly);
 
+            _featureTokenProvider.CancelToken(feature);
             _actionDescriptorChangeProvider.TokenSource.Cancel();
 
             _logger.LogInformation($"Feature '{feature.Name}' updated.");

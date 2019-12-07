@@ -20,7 +20,7 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc
 
         public void Add(Assembly featureAssembly)
         {
-            _logger.LogInformation($"Adding assembly '{featureAssembly.FullName} to ApplicationPartManager.'");
+            _logger.LogDebug($"Adding assembly '{featureAssembly.FullName} to ApplicationPartManager.'");
             var assemblyPart = new AssemblyPart(featureAssembly);
             _appPartManager.ApplicationParts.Add(assemblyPart);
         }
@@ -36,7 +36,7 @@ namespace ASPNETCoreRuntimeCompilation.FeatureRuntimeCompilation.Mvc
 
             foreach (var part in parts)
             {
-                _logger.LogInformation($"Removing assembly '{part.Assembly.FullName}' from ApplicationPartManager.");
+                _logger.LogDebug($"Removing assembly '{part.Assembly.FullName}' from ApplicationPartManager.");
                 _appPartManager.ApplicationParts.Remove(part);
             }
         }
