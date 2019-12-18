@@ -8,18 +8,16 @@ namespace FeatureRuntimeCompilation.Caching
     {
         private readonly ConcurrentDictionary<string, (CancellationTokenSource, IChangeToken)> _tokens = new ConcurrentDictionary<string, (CancellationTokenSource, IChangeToken)>();
 
-        public IChangeToken GetToken(FeatureMetadata feature)
+        public (CancellationTokenSource, IChangeToken) GetToken(FeatureMetadata feature)
         {
             var tokenKey = feature.Name.ToLower();
 
-            var (tokenSource, token) = _tokens.GetOrAdd(tokenKey, key =>
+            return _tokens.GetOrAdd(tokenKey, key =>
             {
                 var tokenSource = new CancellationTokenSource();
                 var changeToken = new CancellationChangeToken(tokenSource.Token);
                 return (tokenSource, changeToken);
             });
-
-            return token;
         }
 
         public void CancelToken(FeatureMetadata feature)

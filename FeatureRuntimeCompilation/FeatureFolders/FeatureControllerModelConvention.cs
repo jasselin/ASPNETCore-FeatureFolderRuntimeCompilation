@@ -20,7 +20,7 @@ namespace FeatureRuntimeCompilation.FeatureFolders
             _logger.LogDebug($"FeatureControllerModelConvention.Apply ('{controller.ControllerType.FullName}')");
 
             SetControllerProperties(controller);
-            SetControllerRoute(controller);
+            //SetControllerRoute(controller);
         }
 
         private void SetControllerProperties(ControllerModel controller)
@@ -37,9 +37,11 @@ namespace FeatureRuntimeCompilation.FeatureFolders
             for (var i = 0; i < tokens.Length - 1; i++)
             {
                 var key = $"level{tokens.Length - i - 1}";
-                controller.RouteValues.Add(key, tokens[i]); // needed by FeatureMetadataProvider
+                controller.RouteValues.Add(key, tokens[i]); // needed by FeatureMetadataProvider and controller resolution
                 controller.Properties.Add(key, tokens[i]);
             }
+            //controller.RouteValues.Add("controller", tokens[tokens.Length - 1].Replace("Controller",string.Empty));
+            //controller.RouteValues.Add("action", "Index");
         }
 
         private void SetControllerRoute(ControllerModel controller)

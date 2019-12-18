@@ -1,5 +1,6 @@
 ﻿using FeatureRuntimeCompilation.Caching;
 using FeatureRuntimeCompilation.Compilation;
+using FeatureRuntimeCompilation.FeatureRouting;
 using FeatureRuntimeCompilation.Mvc;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -24,6 +25,8 @@ namespace FeatureRuntimeCompilation.Configuration
             services.AddSingleton<RazorReferenceManager, FeatureRazorReferenceManager>();
             services.AddSingleton<FeatureActionDescriptorChangeProvider>();
             services.AddSingleton<IActionDescriptorChangeProvider>(sp => sp.GetService<FeatureActionDescriptorChangeProvider>());
+
+            services.AddSingleton<ActionEndpointFactory>();
 
             mvcBuilder.AddRazorRuntimeCompilation(options);
 

@@ -36,7 +36,7 @@ namespace FeatureRuntimeCompilation.Mvc
             {
                 var featurePath = GetFeaturePath(fileInfo.PhysicalPath);
                 var feature = _metadataProvider.GetMetadataFor(featurePath);
-                var featureChangeToken = _tokenProvider.GetToken(feature);
+                var (_, featureChangeToken) = _tokenProvider.GetToken(feature);
 
                 var featureRelativePath = featurePath.Substring(_innerProvider.Root.Length).Replace("\\", "/");
                 var fileChangeToken = _innerProvider.Watch(featureRelativePath + "/**/*");

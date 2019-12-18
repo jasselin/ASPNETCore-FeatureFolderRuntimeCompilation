@@ -1,8 +1,10 @@
 ﻿using ASPNETCoreRuntimeCompilation.Features.FeatureA;
 using FeatureRuntimeCompilation.Configuration;
 using FeatureRuntimeCompilation.FeatureFolders;
+using FeatureRuntimeCompilation.FeatureRouting;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -55,6 +57,9 @@ namespace ASPNETCoreRuntimeCompilation
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapDefaultControllerRoute(); // Attribute routing
+
+                //endpoints.MapControllerRoute("featurea", "FeatureA/{action}", new { controller = "FeatureA", action = "Index" });
+                //endpoints.MapFeatureControllerRoute(new { controller = "FeatureA" });
             });
         }
     }
